@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sécurité des Réseaux — Cours Interactif | Pr. Youssou FAYE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --bg:#06080d;
+    --bg-2:#0b1018;
+    --fg:#e6f1ff;
+    --muted:#7a8aa3;
+    --accent:#00ffea;
+    --accent-2:#00ff88;
+    --danger:#ff3366;
+    --warning:#ffb800;
+    --card:rgba(15,22,34,0.7);
+    --border:rgba(0,255,234,0.15);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:'Space Grotesk',sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    overflow-x:hidden;
+  }
+  .font-display{font-family:'Syncopate',sans-serif;letter-spacing:.05em}
+  .font-mono{font-family:'JetBrains Mono',monospace}
+
+  .bg-grid{
+    background-image:
+      linear-gradient(rgba(0,255,234,0.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,255,234,0.04) 1px,transparent 1px);
+    background-size:50px 50px;
+  }
+  .bg-radial{
+    background:radial-gradient(circle at 20% 10%,rgba(0,255,234,0.08),transparent 40%),
+               radial-gradient(circle at 80% 60%,rgba(255,51,102,0.08),transparent 40%),
+               radial-gradient(circle at 50% 100%,rgba(0,255,136,0.06),transparent 50%);
+  }
+
+  .scanline::before{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(transparent 50%,rgba(0,255,234,0.02) 50%);
+    background-size:100% 4px;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  .glow-cyan{text-shadow:0 0 20px rgba(0,255,234,0.6),0 0 40px rgba(0,255,234,0.3)}
+  .glow-red{text-shadow:0 0 20px rgba(255,51,102,0.6),0 0 40px rgba(255,51,102,0.3)}
+  .glow-green{text-shadow:0 0 20px rgba(0,255,136,0.6),0 0 40px rgba(0,255,136,0.3)}
+
+  .card{
+    background:var(--card);
+    backdrop-filter:blur(10px);
+    border:1px solid var(--border);
+    border-radius:14px;
+    position:relative;
+    transition:all .4s cubic-bezier(.4,0,.2,1);
+    overflow:hidden;
+    margin-bottom: 1.5rem;
+  }
+  .card::before{
+    content:'';
+    position:absolute;top:0;left:0;width:100%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    transform:translateX(-100%);
+    transition:transform .8s;
+  }
+  .card:hover::before{transform:translateX(100%)}
+  .card:hover{
+    border-color:rgba(0,255,234,0.4);
+    transform:translateY(-4px);
+    box-shadow:0 20px 40px -10px rgba(0,255,234,0.15);
+  }
+
+  .nav-link{
+    position:relative;
+    padding:6px 12px;
+    color:var(--muted);
+    transition:color .3s;
+    font-size:13px;
+    letter-spacing:.05em;
+  }
+  .nav-link:hover{color:var(--accent)}
+  .nav-link::after{
+    content:'';
+    position:absolute;bottom:0;left:50%;
+    width:0;height:1px;
+    background:var(--accent);
+    transition:all .3s;
+    transform:translateX(-50%);
+  }
+  .nav-link:hover::after{width:80%}
+
+  .btn-cyber{
+    position:relative;
+    padding:12px 28px;
+    background:transparent;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    cursor:pointer;
+    overflow:hidden;
+    transition:all .3s;
+    display:inline-block;
+    text-decoration:none;
+  }
+  .btn-cyber::before{
+    content:'';
+    position:absolute;inset:0;
+    background:var(--accent);
+    transform:translateX(-100%);
+    transition:transform .4s cubic-bezier(.4,0,.2,1);
+    z-index:-1;
+  }
+  .btn-cyber:hover{color:#000}
+  .btn-cyber:hover::before{transform:translateX(0)}
+
+  .section-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--accent);
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    padding:4px 12px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    background:rgba(0,255,234,0.05);
+  }
+
+  .scene{width:280px;height:280px;perspective:1200px;margin:0 auto}
+  .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:rotateCube 25s infinite linear}
+  .cube.paused{animation-play-state:paused}
+  @keyframes rotateCube{
+    0%{transform:rotateX(-20deg) rotateY(0)}
+    100%{transform:rotateX(-20deg) rotateY(360deg)}
+  }
+  .face{
+    position:absolute;
+    width:200px;height:200px;
+    top:40px;left:40px;
+    border:1px solid var(--accent);
+    background:rgba(0,255,234,0.05);
+    backdrop-filter:blur(4px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;
+    text-align:center;
+    box-shadow:inset 0 0 30px rgba(0,255,234,0.1);
+  }
+  .face.front{transform:translateZ(100px)}
+  .face.back{transform:rotateY(180deg) translateZ(100px)}
+  .face.right{transform:rotateY(90deg) translateZ(100px)}
+  .face.left{transform:rotateY(-90deg) translateZ(100px)}
+  .face.top{transform:rotateX(90deg) translateZ(100px)}
+  .face.bottom{transform:rotateX(-90deg) translateZ(100px)}
+
+  .matrix-cell{
+    aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(0,255,234,0.15);
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    cursor:pointer;
+    transition:all .3s;
+    position:relative;
+  }
+  .matrix-cell:hover{transform:scale(1.1);z-index:5;box-shadow:0 0 20px rgba(0,255,234,0.5)}
+  .matrix-green{background:rgba(0,255,136,0.1);color:#00ff88}
+  .matrix-yellow{background:rgba(255,184,0,0.12);color:#ffb800}
+  .matrix-orange{background:rgba(255,102,0,0.15);color:#ff6600}
+  .matrix-red{background:rgba(255,51,102,0.18);color:#ff3366}
+
+  .quiz-option{
+    padding:14px 18px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .3s;
+    background:rgba(15,22,34,0.5);
+    margin-bottom:10px;
+  }
+  .quiz-option:hover{border-color:var(--accent);background:rgba(0,255,234,0.05)}
+  .quiz-option.correct{border-color:var(--accent-2);background:rgba(0,255,136,0.1);color:var(--accent-2)}
+  .quiz-option.wrong{border-color:var(--danger);background:rgba(255,51,102,0.1);color:var(--danger)}
+  .quiz-option.disabled{pointer-events:none;opacity:.6}
+
+  .progress-bar{
+    height:2px;background:rgba(0,255,234,0.1);overflow:hidden;border-radius:2px;
+  }
+  .progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:width .3s;
+  }
+
+  .hacker-card{
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+  }
+  .hacker-card .icon-bg{
+    position:absolute;
+    right:-20px;bottom:-20px;
+    font-size:120px;
+    opacity:0.05;
+    transition:all .5s;
+  }
+  .hacker-card:hover .icon-bg{opacity:0.15;transform:rotate(10deg) scale(1.1)}
+
+  .pulse-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent-2);
+    box-shadow:0 0 10px var(--accent-2);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.5;transform:scale(1.3)}
+  }
+
+  .particle{
+    position:absolute;
+    width:2px;height:2px;
+    background:var(--accent);
+    border-radius:50%;
+    opacity:0;
+    animation:float 8s infinite ease-in-out;
+  }
+  @keyframes float{
+    0%{opacity:0;transform:translateY(100vh) translateX(0)}
+    10%{opacity:0.6}
+    90%{opacity:0.6}
+    100%{opacity:0;transform:translateY(-100vh) translateX(50px)}
+  }
+
+  .tree-ex{
+    cursor:pointer;
+    transition:all .3s;
+  }
+  .tree-ex.active{
+    border-color:var(--danger);
+    box-shadow:0 0 30px rgba(255,51,102,0.3);
+  }
+
+  .toast{
+    position:fixed;
+    bottom:30px;right:30px;
+    padding:14px 22px;
+    background:var(--card);
+    backdrop-filter:blur(10px);
+    border:1px solid var(--accent);
+    border-radius:8px;
+    color:var(--fg);
+    font-size:14px;
+    transform:translateX(400px);
+    transition:transform .4s cubic-bezier(.4,0,.2,1);
+    z-index:1000;
+    box-shadow:0 10px 40px rgba(0,255,234,0.2);
+  }
+  .toast.show{transform:translateX(0)}
+
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:var(--bg-2)}
+  ::-webkit-scrollbar-thumb{background:rgba(0,255,234,0.2);border-radius:4px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(0,255,234,0.4)}
+
+  @keyframes glitch{
+    0%,100%{transform:translate(0)}
+    20%{transform:translate(-1px,1px)}
+    40%{transform:translate(-1px,-1px)}
+    60%{transform:translate(1px,1px)}
+    80%{transform:translate(1px,-1px)}
+  }
+  .glitch:hover{animation:glitch .3s infinite}
+
+  /* Sécurisation de la visibilité */
+  .reveal { opacity: 1 !important; transform: none !important; }
+
+  @media (max-width:768px){
+    .scene{transform:scale(0.8)}
+  }
+</style>
+</head>
+<body class="bg-grid">
+
+<div id="toast" class="toast"></div>
+<div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-black/40 border-b border-cyan-500/10">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 border border-cyan-400 rounded flex items-center justify-center relative">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-sm"></i>
+        <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+      </div>
+      <div>
+        <div class="font-mono text-xs text-cyan-400">SEC.NET</div>
+        <div class="font-mono text-[10px] text-gray-500">UASZ / L3 II</div>
+      </div>
+    </div>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#intro" class="nav-link font-mono">01_INTRO</a>
+      <a href="#cyber" class="nav-link font-mono">02_CYBER</a>
+      <a href="#hackers" class="nav-link font-mono">03_HACKERS</a>
+      <a href="#risques" class="nav-link font-mono">04_RISQUES</a>
+      <a href="#matrice" class="nav-link font-mono">05_MATRICE</a>
+      <a href="#iso" class="nav-link font-mono">06_ISO</a>
+      <a href="#cid" class="nav-link font-mono">07_CID</a>
+      <a href="#cube" class="nav-link font-mono">08_CUBE</a>
+      <a href="#quiz" class="nav-link font-mono">09_QUIZ</a>
+    </div>
+    <a href="#quiz" class="btn-cyber text-xs hidden sm:block">START QUIZ</a>
+  </div>
+</nav>
+
+<header class="relative min-h-screen flex items-center bg-radial scanline overflow-hidden pt-20">
+  <div class="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
+    <div class="grid lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="section-tag">COURS / 2025-2026</span>
+          <div class="pulse-dot"></div>
+          <span class="font-mono text-xs text-gray-400">SYSTEM_SECURE</span>
+        </div>
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-none mb-6">
+          <span class="block text-white">SÉCURITÉ</span>
+          <span class="block text-cyan-400 glow-cyan">DES RÉSEAUX</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-2xl mb-8 leading-relaxed">
+          Une exploration interactive des fondations de la cybersécurité — 
+          des définitions essentielles aux mécanismes de protection du triptyque 
+          <span class="text-cyan-400 font-mono">CID</span>. Basé sur le cours de 
+          <span class="text-white">Pr. Youssou FAYE</span>.
+        </p>
+        <div class="flex flex-wrap gap-4 mb-10">
+          <a href="#intro" class="btn-cyber">EXPLORER LE COURS</a>
+          <a href="#quiz" class="btn-cyber" style="border-color:var(--accent-2);color:var(--accent-2)">TESTER SES CONNAISSANCES</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-cyan-500/10">
+          <div>
+            <div class="font-mono text-xs text-gray-500">PROFESSEUR</div>
+            <div class="text-white font-medium mt-1">Youssou FAYE</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-gray-500">UNIVERSITÉ</div>
+            <div class="text-white font-medium mt-1">UASZ</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-gray-500">UFR</div>
+            <div class="text-white font-medium mt-1">Sciences & Tech</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-gray-500">NIVEAU</div>
+            <div class="text-white font-medium mt-1">L3 Ing. Info</div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-5 relative">
+        <div class="relative w-full aspect-square max-w-md mx-auto">
+          <div class="card p-6 relative" style="background:rgba(5,8,12,0.8)">
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-cyan-500/10">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500"></div>
+              <span class="font-mono text-xs text-gray-500 ml-2">~/securite_reseaux$</span>
+            </div>
+            <div class="font-mono text-sm space-y-2" id="terminal">
+              <div class="text-cyan-400">$ init --course="securite"</div>
+              <div class="text-gray-400">> Chargement des chapitres... <span class="text-green-400">[OK]</span></div>
+              <div class="text-gray-400">> 6 chapitres détectés</div>
+              <div class="text-cyan-400">$ scan --vulnerabilities</div>
+              <div class="text-gray-400">> <span class="text-yellow-400">⚠</span> 0 vulnérabilités critiques</div>
+              <div class="text-cyan-400">$ encrypt --data --algo=AES256</div>
+              <div class="text-gray-400">> Chiffrement... <span class="text-green-400">[OK]</span></div>
+              <div class="text-cyan-400">$ status</div>
+              <div class="text-green-400">> SYSTÈME SÉCURISÉ ✓</div>
+              <div class="text-cyan-400">$ <span class="animate-pulse">_</span></div>
+            </div>
+            <div class="absolute -top-3 -right-3 px-3 py-1 bg-cyan-400 text-black text-xs font-mono font-bold rounded">LIVE</div>
+          </div>
+          <div class="absolute -z-10 -top-10 -left-10 w-32 h-32 border border-cyan-400/20 rounded-full"></div>
+          <div class="absolute -z-10 -bottom-10 -right-10 w-40 h-40 border border-green-400/20 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
+    <span class="font-mono text-xs text-gray-500 tracking-widest">SCROLL</span>
+    <div class="w-px h-12 bg-gradient-to-b from-cyan-400 to-transparent"></div>
+  </div>
+</header>
+
+<section class="py-20 border-t border-cyan-500/10 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div>
+      <span class="section-tag">PLAN DU COURS</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4 mb-12">Six chapitres, <span class="text-cyan-400">une mission</span></h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-cyan-400">CHAPITRE 01</span>
+          <i class="fa-solid fa-circle-info text-cyan-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Introduction</h3>
+        <p class="text-gray-400 text-sm">Définitions fondamentales, cybersécurité et typologie des pirates.</p>
+      </div>
+      <div class="card p-6" style="border-color:rgba(0,255,136,0.2)">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-green-400">CHAPITRE 02</span>
+          <i class="fa-solid fa-shield-halved text-green-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Généralités sur la Sécurité</h3>
+        <p class="text-gray-400 text-sm">Risques, vulnérabilités, menaces, trio CID et contre-mesures.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-cyan-400">CHAPITRE 03</span>
+          <i class="fa-solid fa-key text-cyan-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">La Cryptographie</h3>
+        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-cyan-400">CHAPITRE 04</span>
+          <i class="fa-solid fa-handshake text-cyan-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Protocoles de sécurité</h3>
+        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-cyan-400">CHAPITRE 05</span>
+          <i class="fa-solid fa-sitemap text-cyan-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Sécurité des architectures</h3>
+        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+      </div>
+      <div class="card p-6">
+        <div class="flex items-start justify-between mb-3">
+          <span class="font-mono text-xs text-cyan-400">CHAPITRE 06</span>
+          <i class="fa-solid fa-chart-line text-cyan-400"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Supervision de réseaux</h3>
+        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="intro" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">CHAPITRE 01 / INTRODUCTION</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Définitions <span class="text-cyan-400">fondamentales</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Comprendre la sécurité commence par une terminologie précise. Voici les piliers conceptuels du cours.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="card p-8" onclick="showToast('Système informatique = socle technique')">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-server text-cyan-400"></i>
+          </div>
+          <h3 class="text-xl font-bold">Système informatique</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">Ensemble des <span class="text-cyan-400">moyens techniques</span> pour faire fonctionner un système d'information.</p>
+      </div>
+
+      <div class="card p-8" onclick="showToast('Le SI = cœur organisationnel')">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-database text-cyan-400"></i>
+          </div>
+          <h3 class="text-xl font-bold">Système d'Information (SI)</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">Ensemble organisé des moyens <span class="text-cyan-400">humains</span> et <span class="text-cyan-400">techniques</span> (matériels, logiciels) pour <span class="text-green-400">acquérir</span>, <span class="text-green-400">stocker</span>, <span class="text-green-400">exploiter</span> et <span class="text-green-400">diffuser</span> les informations.</p>
+      </div>
+
+      <div class="card p-8" onclick="showToast('SSI = protection globale')">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-shield text-cyan-400"></i>
+          </div>
+          <h3 class="text-xl font-bold">Sécurité des SI (SSI)</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">Ensemble des mesures <span class="text-cyan-400">structurelles, techniques, organisationnelles et humaines</span> mises en œuvre pour protéger les informations et les systèmes qui les traitent.</p>
+      </div>
+
+      <div class="card p-8" onclick="showToast('Sécurité informatique = protection des actifs')">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-lock text-cyan-400"></i>
+          </div>
+          <h3 class="text-xl font-bold">Sécurité informatique</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed">Ensemble des moyens et techniques informatiques mis en œuvre pour protéger les <span class="text-cyan-400">actifs informationnels</span> afin d'assurer l'intégralité de leurs propriétés.</p>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <div class="flex flex-col md:flex-row gap-8 items-start">
+        <div class="flex-1">
+          <h3 class="text-2xl font-bold mb-4 flex items-center gap-3">
+            <i class="fa-solid fa-box-archive text-cyan-400"></i>
+            Les actifs informationnels
+          </h3>
+          <p class="text-gray-400 leading-relaxed mb-4">
+            Les actifs informationnels d'une entreprise représentent l'ensemble des données des SI nécessaires au bon déroulement de l'entreprise.
+          </p>
+        </div>
+        <div class="flex-1 grid grid-cols-2 gap-3">
+          <div class="px-4 py-3 border border-cyan-500/20 rounded-lg flex items-center gap-3"><i class="fa-solid fa-database text-cyan-400 text-sm"></i><span class="text-sm">Base de données</span></div>
+          <div class="px-4 py-3 border border-cyan-500/20 rounded-lg flex items-center gap-3"><i class="fa-solid fa-users text-cyan-400 text-sm"></i><span class="text-sm">Ressources humaines</span></div>
+          <div class="px-4 py-3 border border-cyan-500/20 rounded-lg flex items-center gap-3"><i class="fa-solid fa-globe text-cyan-400 text-sm"></i><span class="text-sm">Portail web</span></div>
+          <div class="px-4 py-3 border border-cyan-500/20 rounded-lg flex items-center gap-3"><i class="fa-solid fa-code text-cyan-400 text-sm"></i><span class="text-sm">Code sources</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-diagram-project text-cyan-400"></i>
+        Chaîne de protection
+      </h3>
+      <div class="flex flex-col md:flex-row items-stretch gap-3">
+        <div class="flex-1 p-5 border border-cyan-500/30 rounded-lg text-center bg-cyan-500/5">
+          <div class="font-mono text-xs text-cyan-400 mb-2">NIVEAU 1</div>
+          <div class="font-bold">Sécurité de l'Information</div>
+          <div class="text-xs text-gray-500 mt-2">Protéger les données</div>
+        </div>
+        <div class="flex items-center justify-center text-cyan-400"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="flex-1 p-5 border border-cyan-500/30 rounded-lg text-center bg-cyan-500/5">
+          <div class="font-mono text-xs text-cyan-400 mb-2">NIVEAU 2</div>
+          <div class="font-bold">Sécurité du SI</div>
+          <div class="text-xs text-gray-500 mt-2">Protéger le système d'information</div>
+        </div>
+        <div class="flex items-center justify-center text-cyan-400"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="flex-1 p-5 border border-cyan-500/30 rounded-lg text-center bg-cyan-500/5">
+          <div class="font-mono text-xs text-cyan-400 mb-2">NIVEAU 3</div>
+          <div class="font-bold">Sécurité du système informatique</div>
+          <div class="text-xs text-gray-500 mt-2">Socle technique (stockage, traitement, circulation)</div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 mt-4 italic">Les systèmes informatiques sont au cœur des systèmes d'information.</p>
+    </div>
+  </div>
+</section>
+
+<section id="cyber" class="py-24 relative border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">CYBERSÉCURITÉ</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">La <span class="text-cyan-400">cybersécurité</span></h2>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 card p-8">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+          <i class="fa-solid fa-shield-virus text-cyan-400"></i>
+          Définition
+        </h3>
+        <p class="text-gray-300 leading-relaxed mb-6">
+          La cybersécurité est l'ensemble des <span class="text-cyan-400">outils, politiques, concepts de sécurité, mécanismes, lignes directrices, méthodes de gestion des risques, actions, bonnes pratiques et technologies</span> utilisés pour protéger les actifs du Système Informatique.
+        </p>
+        <div class="p-4 border-l-2 border-cyan-400 bg-cyan-500/5 rounded-r-lg">
+          <p class="text-sm text-gray-300">
+            <i class="fa-solid fa-bullseye text-cyan-400 mr-2"></i>
+            La cybersécurité cherche à <span class="text-cyan-400">garantir les propriétés</span> des actifs contre les risques affectant la sécurité.
+          </p>
+        </div>
+        <div class="mt-6 p-4 border border-green-500/20 bg-green-500/5 rounded-lg">
+          <div class="font-mono text-xs text-green-400 mb-2">OBJECTIFS GÉNÉRAUX</div>
+          <div class="text-2xl font-bold text-green-400 glow-green">Le trio CID</div>
+          <div class="text-sm text-gray-400 mt-1">Confidentialité · Intégrité · Disponibilité</div>
+        </div>
+      </div>
+
+      <div class="card p-8">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+          <i class="fa-solid fa-people-group text-cyan-400"></i>
+          Pluridisciplinarité
+        </h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <i class="fa-solid fa-network-wired text-cyan-400"></i><span>TIC</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <i class="fa-solid fa-balance-scale text-cyan-400"></i><span>Éthique</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <i class="fa-solid fa-clipboard-check text-cyan-400"></i><span>Normalisation</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <i class="fa-solid fa-gavel text-cyan-400"></i><span>Législation</span>
+          </div>
+          <div class="flex items-center gap-3 p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <i class="fa-solid fa-file-contract text-cyan-400"></i><span>Réglementation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-user-shield text-cyan-400"></i>
+        Qui est concerné par la cybersécurité ?
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="text-center p-4 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/5 transition-all cursor-pointer" onclick="showToast('Les informaticiens sont en première ligne')">
+          <i class="fa-solid fa-laptop-code text-2xl text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Informaticiens</div>
+        </div>
+        <div class="text-center p-4 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/5 transition-all cursor-pointer" onclick="showToast('Les dirigeants décident des stratégies')">
+          <i class="fa-solid fa-user-tie text-2xl text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Dirigeants</div>
+        </div>
+        <div class="text-center p-4 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/5 transition-all cursor-pointer" onclick="showToast('Fournisseurs et partenaires')">
+          <i class="fa-solid fa-handshake text-2xl text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Fournisseurs & Partenaires</div>
+        </div>
+        <div class="text-center p-4 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/5 transition-all cursor-pointer" onclick="showToast('Les utilisateurs finaux')">
+          <i class="fa-solid fa-user text-2xl text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Utilisateurs</div>
+        </div>
+        <div class="text-center p-4 border border-cyan-500/20 rounded-lg hover:bg-cyan-500/5 transition-all cursor-pointer" onclick="showToast('Tout membre du groupe concerné')">
+          <i class="fa-solid fa-users text-2xl text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Tout membre du SI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+        De quoi se protège-t-on ?
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="text-center p-4 border border-red-500/20 rounded-lg bg-red-500/5 hover:bg-red-500/10 transition-all">
+          <i class="fa-solid fa-tornado text-2xl text-red-400 mb-2"></i>
+          <div class="text-sm">Catastrophes naturelles</div>
+        </div>
+        <div class="text-center p-4 border border-red-500/20 rounded-lg bg-red-500/5 hover:bg-red-500/10 transition-all">
+          <i class="fa-solid fa-bomb text-2xl text-red-400 mb-2"></i>
+          <div class="text-sm">Terrorisme, vol</div>
+        </div>
+        <div class="text-center p-4 border border-red-500/20 rounded-lg bg-red-500/5 hover:bg-red-500/10 transition-all">
+          <i class="fa-solid fa-skull text-2xl text-red-400 mb-2"></i>
+          <div class="text-sm">Pirates</div>
+        </div>
+        <div class="text-center p-4 border border-red-500/20 rounded-lg bg-red-500/5 hover:bg-red-500/10 transition-all">
+          <i class="fa-solid fa-user-secret text-2xl text-red-400 mb-2"></i>
+          <div class="text-sm">Hackers</div>
+        </div>
+        <div class="text-center p-4 border border-red-500/20 rounded-lg bg-red-500/5 hover:bg-red-500/10 transition-all">
+          <i class="fa-solid fa-mask text-2xl text-red-400 mb-2"></i>
+          <div class="text-sm">Comportements malicieux</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="hackers" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">PIRATAGE / PIRATES VS HACKERS</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Pirates <span class="text-red-400 glow-red">vs</span> Hackers</h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Souvent confondus, ces deux profils ont pourtant des <span class="text-cyan-400">éthiques différentes</span>.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-12">
+      <div class="card p-8 hacker-card" style="border-color:rgba(255,51,102,0.2)">
+        <i class="fa-solid fa-skull-crossbones icon-bg text-red-400"></i>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 border border-red-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-skull text-red-400"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-red-400">Le Pirate</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed relative z-10">
+          Terme <span class="text-white">non propre à l'informatique</span> — désigne historiquement un individu lié au banditisme en mer, pillant et volant.
+        </p>
+        <div class="mt-4 p-4 bg-red-500/5 border-l-2 border-red-400 rounded-r-lg relative z-10">
+          <p class="text-sm text-gray-300">En informatique : personne qui cherche à <span class="text-red-400">piller le système</span> en détruisant ses protections.</p>
+        </div>
+      </div>
+
+      <div class="card p-8 hacker-card" style="border-color:rgba(255,184,0,0.2)">
+        <i class="fa-solid fa-user-secret icon-bg text-yellow-400"></i>
+        <div class="flex items-center gap-4 mb-4 relative z-10">
+          <div class="w-12 h-12 border border-yellow-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-user-secret text-yellow-400"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-yellow-400">Le Hacker</h3>
+        </div>
+        <p class="text-gray-400 leading-relaxed relative z-10">
+          Individu qui tente d'<span class="text-yellow-400">exploiter des vulnérabilités</span> à des fins personnelles, financières ou politiques.
+        </p>
+        <div class="mt-4 p-4 bg-yellow-500/5 border-l-2 border-yellow-400 rounded-r-lg relative z-10">
+          <p class="text-sm text-gray-300">Utilise des compétences en <span class="text-yellow-400">programmation</span> pour exploiter les vulnérabilités logicielles ou protocoles.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <h3 class="text-2xl font-bold mb-2">Les trois chapeaux du hacker</h3>
+      <p class="text-gray-400 text-sm">Cliquez sur chaque carte pour en savoir plus.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card p-8 cursor-pointer transition-all" onclick="toggleCard(this)" style="border-color:rgba(0,255,136,0.3)">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-14 h-14 rounded-full bg-green-500/10 border-2 border-green-400 flex items-center justify-center">
+            <i class="fa-solid fa-hat-cowboy text-green-400 text-xl"></i>
+          </div>
+          <span class="font-mono text-xs text-green-400">WHITE HAT</span>
+        </div>
+        <h4 class="text-xl font-bold text-green-400 mb-2">Hackers au chapeau blanc</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Leur objectif est de <span class="text-green-400">découvrir les faiblesses</span> du système pour améliorer la sécurité. Le propriétaire du système donne l'autorisation de s'y introduire et reçoit les résultats du test.
+        </p>
+      </div>
+
+      <div class="card p-8 cursor-pointer transition-all" onclick="toggleCard(this)" style="border-color:rgba(255,51,102,0.3)">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-14 h-14 rounded-full bg-red-500/10 border-2 border-red-400 flex items-center justify-center">
+            <i class="fa-solid fa-hat-cowboy text-red-400 text-xl"></i>
+          </div>
+          <span class="font-mono text-xs text-red-400">BLACK HAT</span>
+        </div>
+        <h4 class="text-xl font-bold text-red-400 mb-2">Hackers au chapeau noir</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Profitent de toute vulnérabilité à des fins <span class="text-red-400">personnelles, financières ou politiques illégales</span>.
+        </p>
+      </div>
+
+      <div class="card p-8 cursor-pointer transition-all" onclick="toggleCard(this)" style="border-color:rgba(150,150,150,0.3)">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-14 h-14 rounded-full bg-gray-500/10 border-2 border-gray-400 flex items-center justify-center">
+            <i class="fa-solid fa-hat-cowboy text-gray-300 text-xl"></i>
+          </div>
+          <span class="font-mono text-xs text-gray-300">GRAY HAT</span>
+        </div>
+        <h4 class="text-xl font-bold text-gray-300 mb-2">Hackers au chapeau gris</h4>
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Parfois détectent une vulnérabilité et en font part aux propriétaires du système si cela s'intègre à leurs objectifs. Mais certains publient leurs découvertes sur Internet pour que d'autres hackers puissent les exploiter.
+        </p>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-6" style="border-color:rgba(255,51,102,0.2)">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-12 h-12 border border-red-400/30 rounded-lg flex items-center justify-center">
+          <i class="fa-solid fa-users-rays text-red-400"></i>
+        </div>
+        <h3 class="text-xl font-bold">Hackers organisés</h3>
+      </div>
+      <p class="text-gray-400">Ces criminels sont notamment des <span class="text-red-400">organisations de cybercriminels</span>, des <span class="text-red-400">hacktivistes</span>, des <span class="text-red-400">terroristes</span> et des <span class="text-red-400">hackers financés par des gouvernements</span> parfois.</p>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-map text-cyan-400"></i>
+        Cartographie des cybercriminels
+      </h3>
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="p-5 border border-cyan-500/20 rounded-lg bg-cyan-500/5">
+          <div class="font-mono text-xs text-cyan-400 mb-2">SOURCE 01</div>
+          <h4 class="font-bold mb-2">Sources internes</h4>
+          <ul class="text-xs text-gray-400 space-y-1">
+            <li>• Employés et anciens employés</li>
+            <li>• Employés sous contrat</li>
+            <li>• Partenaires de confiance</li>
+          </ul>
+        </div>
+        <div class="p-5 border border-red-500/20 rounded-lg bg-red-500/5">
+          <div class="font-mono text-xs text-red-400 mb-2">SOURCE 02</div>
+          <h4 class="font-bold mb-2">Agresseurs organisés</h4>
+          <ul class="text-xs text-gray-400 space-y-1">
+            <li>• Cyberactivistes</li>
+            <li>• Hackers financés par un état</li>
+          </ul>
+        </div>
+        <div class="p-5 border border-yellow-500/20 rounded-lg bg-yellow-500/5">
+          <div class="font-mono text-xs text-yellow-400 mb-2">SOURCE 03</div>
+          <h4 class="font-bold mb-2">Pirates informatiques</h4>
+          <ul class="text-xs text-gray-400 space-y-1">
+            <li>• Chapeau noir</li>
+            <li>• Chapeau gris</li>
+            <li>• Chapeau blanc</li>
+          </ul>
+        </div>
+        <div class="p-5 border border-gray-500/20 rounded-lg bg-gray-500/5">
+          <div class="font-mono text-xs text-gray-400 mb-2">SOURCE 04</div>
+          <h4 class="font-bold mb-2">Autres</h4>
+          <ul class="text-xs text-gray-400 space-y-1">
+            <li>• Amateurs</li>
+            <li>• Personnes extérieures</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-24 border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">CHAPITRE 02 / GÉNÉRALITÉS</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Approche <span class="text-cyan-400">traditionnelle</span></h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card p-8 text-center group">
+        <div class="w-16 h-16 mx-auto mb-4 border border-cyan-400/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-shield text-cyan-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-cyan-400">Prévention</h3>
+        <p class="text-gray-400 text-sm">Empêcher l'incident avant qu'il se produise. Réduire la probabilité (−O).</p>
+      </div>
+      <div class="card p-8 text-center group">
+        <div class="w-16 h-16 mx-auto mb-4 border border-yellow-400/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-eye text-yellow-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-yellow-400">Détection</h3>
+        <p class="text-gray-400 text-sm">Identifier l'incident lorsqu'il se produit. Surveiller en continu.</p>
+      </div>
+      <div class="card p-8 text-center group">
+        <div class="w-16 h-16 mx-auto mb-4 border border-red-400/30 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-bolt text-red-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-red-400">Réaction</h3>
+        <p class="text-gray-400 text-sm">Répondre à l'incident et restaurer le système. Réduire la gravité (−G).</p>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-magnifying-glass-chart text-cyan-400"></i>
+        Approche d'étude de la cybersécurité
+      </h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="p-6 border border-red-500/20 rounded-lg bg-red-500/5">
+          <div class="font-mono text-xs text-red-400 mb-3">A. LES RISQUES</div>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-red-400"></i>Vulnérabilités</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-red-400"></i>Menaces</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-red-400"></i>Attaques</li>
+          </ul>
+        </div>
+        <div class="p-6 border border-green-500/20 rounded-lg bg-green-500/5">
+          <div class="font-mono text-xs text-green-400 mb-3">B. LES MESURES</div>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-green-400"></i>Services / objectifs / propriétés de sécurité</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-circle text-[6px] text-green-400"></i>Mécanismes de sécurité pour atteindre les objectifs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="risques" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">RISQUES / VULNÉRABILITÉS / MENACES</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Anatomie d'un <span class="text-red-400 glow-red">risque</span></h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card p-8" style="border-color:rgba(255,51,102,0.2)">
+        <div class="font-mono text-xs text-red-400 mb-3">DÉFINITION 01</div>
+        <h3 class="text-2xl font-bold mb-3">Risque</h3>
+        <p class="text-gray-400 leading-relaxed">Couple <span class="text-red-400">(menace, vulnérabilité)</span> qui impacte sur l'information.</p>
+      </div>
+      <div class="card p-8">
+        <div class="font-mono text-xs text-cyan-400 mb-3">DÉFINITION 02</div>
+        <h3 class="text-2xl font-bold mb-3">Menace</h3>
+        <p class="text-gray-400 leading-relaxed">Possibilité qu'un événement nuisible (<span class="text-cyan-400">accidentel ou intentionnel</span>), tel qu'une attaque, survienne.</p>
+      </div>
+      <div class="card p-8">
+        <div class="font-mono text-xs text-yellow-400 mb-3">DÉFINITION 03</div>
+        <h3 class="text-2xl font-bold mb-3">Vulnérabilité</h3>
+        <p class="text-gray-400 leading-relaxed"><span class="text-yellow-400">Faiblesse</span> qui expose un système à une attaque.</p>
+      </div>
+    </div>
+
+    <div class="card p-6 mb-12" style="border-color:rgba(255,51,102,0.3)">
+      <div class="flex items-center gap-4 mb-2">
+        <i class="fa-solid fa-bolt text-red-400 text-xl"></i>
+        <h3 class="text-xl font-bold text-red-400">Attaque</h3>
+      </div>
+      <p class="text-gray-400">Exploitation <span class="text-red-400">délibérée</span> d'une faiblesse découverte dans un système informatique.</p>
+    </div>
+
+    <div class="mb-12">
+      <h3 class="text-2xl font-bold mb-4">L'exemple de l'arbre</h3>
+      <p class="text-gray-400 mb-6">Cliquez sur chaque scénario pour visualiser le niveau de risque.</p>
+    </div>
+
+    <div class="grid md:grid-cols-5 gap-4 mb-6">
+      <div class="tree-ex card p-5 cursor-pointer" data-vuln="0" data-menace="tomber" data-risk="presque néant" onclick="selectTree(this)">
+        <div class="font-mono text-xs text-green-400 mb-2">NIVEAU 0</div>
+        <div class="text-center my-4"><i class="fa-solid fa-tree text-4xl text-green-400/50"></i></div>
+        <div class="text-xs text-gray-400">
+          <div><span class="text-cyan-400">Vulnérabilité:</span> faible</div>
+          <div><span class="text-cyan-400">Menace:</span> tomber</div>
+          <div class="mt-2 font-bold text-green-400">Risque: presque néant</div>
+        </div>
+      </div>
+      <div class="tree-ex card p-5 cursor-pointer" data-vuln="1" data-menace="tomber" data-risk="se casser le bras" onclick="selectTree(this)">
+        <div class="font-mono text-xs text-yellow-400 mb-2">NIVEAU 1</div>
+        <div class="text-center my-4"><i class="fa-solid fa-tree text-4xl text-yellow-400/50"></i></div>
+        <div class="text-xs text-gray-400">
+          <div><span class="text-cyan-400">Vulnérabilité:</span> peu</div>
+          <div><span class="text-cyan-400">Menace:</span> tomber</div>
+          <div class="mt-2 font-bold text-yellow-400">Risque: se casser le bras</div>
+        </div>
+      </div>
+      <div class="tree-ex card p-5 cursor-pointer" data-vuln="3" data-menace="tomber" data-risk="se casser les bras ou jambes" onclick="selectTree(this)">
+        <div class="font-mono text-xs text-orange-400 mb-2">NIVEAU 3</div>
+        <div class="text-center my-4"><i class="fa-solid fa-tree text-4xl text-orange-400/50"></i></div>
+        <div class="text-xs text-gray-400">
+          <div><span class="text-cyan-400">Vulnérabilité:</span> moyen</div>
+          <div><span class="text-cyan-400">Menace:</span> tomber</div>
+          <div class="mt-2 font-bold text-orange-400">Risque: bras ou jambes</div>
+        </div>
+      </div>
+      <div class="tree-ex card p-5 cursor-pointer" data-vuln="5" data-menace="tomber" data-risk="mourir" onclick="selectTree(this)">
+        <div class="font-mono text-xs text-red-400 mb-2">NIVEAU 5</div>
+        <div class="text-center my-4"><i class="fa-solid fa-tree text-4xl text-red-400/50"></i></div>
+        <div class="text-xs text-gray-400">
+          <div><span class="text-cyan-400">Vulnérabilité:</span> trop</div>
+          <div><span class="text-cyan-400">Menace:</span> tomber</div>
+          <div class="mt-2 font-bold text-red-400">Risque: mourir</div>
+        </div>
+      </div>
+      <div class="card p-5 flex flex-col justify-center items-center text-center" style="border-color:rgba(0,255,234,0.3)">
+        <i class="fa-solid fa-info-circle text-cyan-400 text-3xl mb-3"></i>
+        <p class="text-xs text-gray-400">Objectif fixé : <span class="text-cyan-400 font-bold">grimper sur l'arbre</span></p>
+        <p class="text-xs text-gray-500 mt-2">Vulnérabilité = fragilité des branches</p>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-12">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-bug text-cyan-400"></i>
+        Nature des vulnérabilités
+      </h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="p-4 border border-cyan-500/20 rounded-lg text-center hover:bg-cyan-500/5 transition-all">
+          <i class="fa-solid fa-hammer text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Physiques</div>
+        </div>
+        <div class="p-4 border border-cyan-500/20 rounded-lg text-center hover:bg-cyan-500/5 transition-all">
+          <i class="fa-solid fa-microchip text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Technologique</div>
+        </div>
+        <div class="p-4 border border-cyan-500/20 rounded-lg text-center hover:bg-cyan-500/5 transition-all">
+          <i class="fa-solid fa-window-restore text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Logicielle d'application</div>
+        </div>
+        <div class="p-4 border border-cyan-500/20 rounded-lg text-center hover:bg-cyan-500/5 transition-all">
+          <i class="fa-solid fa-route text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Protocole de communication</div>
+        </div>
+        <div class="p-4 border border-cyan-500/20 rounded-lg text-center hover:bg-cyan-500/5 transition-all">
+          <i class="fa-solid fa-user text-cyan-400 mb-2"></i>
+          <div class="text-sm font-medium">Acteurs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <h3 class="text-3xl font-bold mb-2">Analyse et gestion des risques</h3>
+      <p class="text-gray-400">Quatre étapes essentielles pour maîtriser les risques.</p>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6 mb-12">
+      <div class="card p-6">
+        <div class="font-mono text-xs text-cyan-400 mb-3">ÉTAPE 01</div>
+        <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa-solid fa-search text-cyan-400 text-xl"></i>
+        </div>
+        <h4 class="font-bold mb-2">Identifier les risques</h4>
+        <p class="text-xs text-gray-400 leading-relaxed">Brainstorming avec l'équipe et établissement d'une check-list.</p>
+        <div class="mt-3 pt-3 border-t border-cyan-500/10">
+          <div class="text-xs text-gray-500 mb-2">Types de risques :</div>
+          <div class="flex flex-wrap gap-1">
+            <span class="text-[10px] px-2 py-1 bg-cyan-500/10 rounded">Techniques</span>
+            <span class="text-[10px] px-2 py-1 bg-cyan-500/10 rounded">Humains</span>
+            <span class="text-[10px] px-2 py-1 bg-cyan-500/10 rounded">Fournisseurs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-xs text-cyan-400 mb-3">ÉTAPE 02</div>
+        <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa-solid fa-chart-column text-cyan-400 text-xl"></i>
+        </div>
+        <h4 class="font-bold mb-2">Évaluer le risque</h4>
+        <p class="text-xs text-gray-400 leading-relaxed mb-3">Quantifier le risque avec des valeurs.</p>
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between p-2 bg-cyan-500/5 rounded">
+            <span class="text-gray-400">Occurrence (O)</span>
+            <span class="text-cyan-400 font-mono">Probabilité</span>
+          </div>
+          <div class="flex justify-between p-2 bg-cyan-500/5 rounded">
+            <span class="text-gray-400">Gravité (G)</span>
+            <span class="text-cyan-400 font-mono">Impact</span>
+          </div>
+          <div class="flex justify-between p-2 bg-cyan-500/10 rounded">
+            <span class="text-cyan-400 font-bold">Criticité (C)</span>
+            <span class="text-cyan-400 font-mono font-bold">O × G</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-xs text-cyan-400 mb-3">ÉTAPE 03</div>
+        <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa-solid fa-reply text-cyan-400 text-xl"></i>
+        </div>
+        <h4 class="font-bold mb-2">Apporter une réponse</h4>
+        <p class="text-xs text-gray-400 mb-3">Si le risque est fort, 4 actions :</p>
+        <div class="space-y-1.5 text-xs">
+          <div class="flex items-start gap-2"><span class="text-cyan-400 font-mono">1.</span><span class="text-gray-400"><span class="text-white">Éviter</span> le risque (réduire O) = Prévention</span></div>
+          <div class="flex items-start gap-2"><span class="text-cyan-400 font-mono">2.</span><span class="text-gray-400"><span class="text-white">Atténuer</span> le risque (réduire G) = Protection</span></div>
+          <div class="flex items-start gap-2"><span class="text-cyan-400 font-mono">3.</span><span class="text-gray-400"><span class="text-white">Transférer</span> le risque : externaliser/assurer</span></div>
+          <div class="flex items-start gap-2"><span class="text-cyan-400 font-mono">4.</span><span class="text-gray-400"><span class="text-white">Gérer</span> le risque = Provision</span></div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="font-mono text-xs text-cyan-400 mb-3">ÉTAPE 04</div>
+        <div class="w-12 h-12 border border-cyan-400/30 rounded-lg flex items-center justify-center mb-4">
+          <i class="fa-solid fa-radar text-cyan-400 text-xl"></i>
+        </div>
+        <h4 class="font-bold mb-2">Suivre les risques</h4>
+        <p class="text-xs text-gray-400 mb-3">Identifier l'état du risque :</p>
+        <div class="space-y-1 text-xs text-gray-400">
+          <div>• Supprimer les risques passés</div>
+          <div>• Surveiller les risques actifs</div>
+          <div>• Surveiller les risques latents</div>
+        </div>
+        <div class="mt-3 pt-3 border-t border-cyan-500/10 text-xs">
+          <div class="text-cyan-400 font-mono">Prévention + Protection = Gestion</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8 text-center">
+      <div class="font-mono text-xs text-gray-500 mb-4">ÉQUATION DE LA GESTION DES RISQUES</div>
+      <div class="flex flex-wrap items-center justify-center gap-4 text-xl md:text-3xl font-bold">
+        <span class="text-cyan-400">Prévention</span>
+        <span class="text-gray-500">+</span>
+        <span class="text-green-400">Protection</span>
+        <span class="text-gray-500">=</span>
+        <span class="text-white glow-cyan">Gestion des risques</span>
+      </div>
+      <div class="mt-6 text-sm text-gray-500">
+        Objectif : faire passer un risque <span class="text-red-400 font-mono">R33</span> vers <span class="text-green-400 font-mono">R11</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="matrice" class="py-24 border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">MATRICE INTERACTIVE</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Matrice des <span class="text-cyan-400">niveaux de risque</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Survolez chaque case pour visualiser la criticité. C = Occurrence × Gravité.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="card p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="font-mono text-xs text-gray-500">MATRICE O × G</div>
+            <div class="flex items-center gap-3 text-xs">
+              <div class="flex items-center gap-1"><div class="w-3 h-3 bg-green-400/40 rounded"></div><span class="text-gray-400">Tolérable</span></div>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 bg-yellow-400/40 rounded"></div><span class="text-gray-400">Critique</span></div>
+              <div class="flex items-center gap-1"><div class="w-3 h-3 bg-red-400/40 rounded"></div><span class="text-gray-400">Catastrophique</span></div>
+            </div>
+          </div>
+
+          <div class="flex">
+            <div class="flex flex-col justify-around mr-3 text-xs font-mono text-gray-500">
+              <div class="flex-1 flex items-center">3</div>
+              <div class="flex-1 flex items-center">2</div>
+              <div class="flex-1 flex items-center">1</div>
+            </div>
+            <div class="flex-1">
+              <div class="grid grid-cols-3 gap-1 mb-2">
+                <div class="matrix-cell matrix-yellow" data-info="R13 — O=1, G=3 | Critique (improbable mais grave)">R13</div>
+                <div class="matrix-cell matrix-orange" data-info="R23 — O=2, G=3 | Catastrophique">R23</div>
+                <div class="matrix-cell matrix-red" data-info="R33 — O=3, G=3 | CATASTROPHIQUE">R33</div>
+                <div class="matrix-cell matrix-green" data-info="R12 — O=1, G=2 | Tolérable">R12</div>
+                <div class="matrix-cell matrix-yellow" data-info="R22 — O=2, G=2 | Critique">R22</div>
+                <div class="matrix-cell matrix-orange" data-info="R32 — O=3, G=2 | Catastrophique">R32</div>
+                <div class="matrix-cell matrix-green" data-info="R11 — O=1, G=1 | Tolérable">R11</div>
+                <div class="matrix-cell matrix-green" data-info="R21 — O=2, G=1 | Tolérable">R21</div>
+                <div class="matrix-cell matrix-yellow" data-info="R31 — O=3, G=1 | Critique">R31</div>
+              </div>
+              <div class="grid grid-cols-3 text-xs font-mono text-gray-500 text-center">
+                <div>1</div><div>2</div><div>3</div>
+              </div>
+              <div class="text-center font-mono text-xs text-gray-500 mt-2">Occurrence (O) →</div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center rotate-180" style="writing-mode:vertical-rl">
+            <span class="font-mono text-xs text-gray-500">← Gravité (G)</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div id="matrixInfo" class="card p-8 min-h-[200px] flex flex-col justify-center">
+          <div class="font-mono text-xs text-cyan-400 mb-3">INFORMATIONS</div>
+          <div class="text-2xl font-bold mb-4">Survolez une cellule</div>
+          <p class="text-gray-400">Découvrez la criticité de chaque combinaison Occurrence × Gravité.</p>
+          <div class="mt-6 pt-6 border-t border-cyan-500/10">
+            <div class="font-mono text-xs text-gray-500 mb-3">EXEMPLE R33</div>
+            <p class="text-sm text-gray-400">Pour le risque <span class="text-red-400 font-mono">R13</span>, même s'il est improbable, sa gravité quand il se produit est forte : on peut le mettre dans la <span class="text-red-400">zone rouge</span>.</p>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="font-mono text-xs text-gray-500 mb-3">ÉCHELLE DE CRITICITÉ</div>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div class="p-3 bg-green-500/10 border border-green-500/30 rounded">
+              <div class="font-bold text-green-400">Faible</div>
+              <div class="text-xs text-gray-500">= 1</div>
+            </div>
+            <div class="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded">
+              <div class="font-bold text-yellow-400">Moyenne</div>
+              <div class="text-xs text-gray-500">= 2</div>
+            </div>
+            <div class="p-3 bg-red-500/10 border border-red-500/30 rounded">
+              <div class="font-bold text-red-400">Forte</div>
+              <div class="text-xs text-gray-500">= 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="iso" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">NORMES & MÉTHODES</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Gestion des risques : <span class="text-cyan-400">ISO/IEC 27005</span></h2>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6 mb-8">
+      <div class="card p-8">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-14 h-14 border border-cyan-400/30 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-certificate text-cyan-400 text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold">ISO/CEI 27005</h3>
+            <p class="text-xs text-gray-500 font-mono">RÉFÉRENCE INTERNATIONALE</p>
+          </div>
+        </div>
+        <p class="text-gray-400 leading-relaxed mb-4">
+          Le modèle <span class="text-cyan-400">ISO/CEI</span> est aux professionnels de la cybersécurité ce que le modèle de réseau <span class="text-cyan-400">OSI</span> est aux ingénieurs de réseaux.
+        </p>
+        <p class="text-gray-400 leading-relaxed mb-4">
+          Les deux proposent un cadre permettant de <span class="text-cyan-400">cerner et de gérer les tâches complexes</span>.
+        </p>
+        <div class="p-4 border-l-2 border-cyan-400 bg-cyan-500/5 rounded-r-lg">
+          <p class="text-sm text-gray-300">ISO 27005 adopte le modèle d'<span class="text-cyan-400">amélioration continue (PDCA)</span>.</p>
+        </div>
+      </div>
+
+      <div class="card p-8">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-3">
+          <i class="fa-solid fa-book text-cyan-400"></i>
+          Autres méthodes de gestion des risques
+        </h3>
+        <div class="space-y-3">
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">NIST SP 800-30</div>
+            <div class="text-xs text-gray-500">National Institute of Standard and Technology (secteur gouvernemental US)</div>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">OCTAVE</div>
+            <div class="text-xs text-gray-500">Software Engineering Institute of Carnegie Mellon University (1999)</div>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">IRAM</div>
+            <div class="text-xs text-gray-500">Information Risk Assessment Methodology</div>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">EBIOS</div>
+            <div class="text-xs text-gray-500">Initialement lancé par le gouvernement français, soutenu par une équipe d'experts</div>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">CRAMM</div>
+            <div class="text-xs text-gray-500">Central Communication and Telecommunication Agency (gouvernement britannique)</div>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg hover:border-cyan-400/40 transition-all">
+            <div class="font-bold text-sm">MEHARI</div>
+            <div class="text-xs text-gray-500">En France, par CLUSIF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fa-solid fa-arrows-spin text-cyan-400"></i>
+        Modèle PDCA — Amélioration continue
+      </h3>
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="text-center p-5 border border-cyan-500/20 rounded-lg">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-cyan-400 flex items-center justify-center">
+            <span class="font-bold text-cyan-400">P</span>
+          </div>
+          <h4 class="font-bold text-cyan-400">Plan</h4>
+          <p class="text-xs text-gray-400 mt-1">Planifier</p>
+        </div>
+        <div class="text-center p-5 border border-green-500/20 rounded-lg">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-green-400 flex items-center justify-center">
+            <span class="font-bold text-green-400">D</span>
+          </div>
+          <h4 class="font-bold text-green-400">Do</h4>
+          <p class="text-xs text-gray-400 mt-1">Faire</p>
+        </div>
+        <div class="text-center p-5 border border-yellow-500/20 rounded-lg">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-yellow-400 flex items-center justify-center">
+            <span class="font-bold text-yellow-400">C</span>
+          </div>
+          <h4 class="font-bold text-yellow-400">Check</h4>
+          <p class="text-xs text-gray-400 mt-1">Vérifier</p>
+        </div>
+        <div class="text-center p-5 border border-red-500/20 rounded-lg">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-red-400 flex items-center justify-center">
+            <span class="font-bold text-red-400">A</span>
+          </div>
+          <h4 class="font-bold text-red-400">Act</h4>
+          <p class="text-xs text-gray-400 mt-1">Agir</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cid" class="py-24 border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">NORME ISO/CEI 27002 / TRIO CID</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Le trio <span class="text-cyan-400 glow-cyan">CID</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Les trois propriétés fondatrices de la sécurité de l'information, identifiées par la norme ISO/CEI 27002.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card p-8 cursor-pointer cid-card" data-cid="C" style="border-color:rgba(0,255,234,0.3)">
+        <div class="text-center mb-4">
+          <div class="w-20 h-20 mx-auto rounded-full border-2 border-cyan-400 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-eye-slash text-cyan-400 text-3xl"></i>
+          </div>
+          <div class="font-mono text-xs text-cyan-400">C</div>
+          <h3 class="text-2xl font-bold text-cyan-400 glow-cyan">Confidentialité</h3>
+        </div>
+        <p class="text-sm text-gray-400 text-center">L'information n'est accessible qu'aux personnes autorisées.</p>
+        <div class="mt-4 pt-4 border-t border-cyan-500/10">
+          <div class="text-xs text-gray-500 mb-2">Menaces :</div>
+          <div class="text-xs text-gray-400">Surveillance réseau, vol de fichiers, espionnage, ingénierie sociale</div>
+        </div>
+      </div>
+
+      <div class="card p-8 cursor-pointer cid-card" data-cid="I" style="border-color:rgba(0,255,136,0.3)">
+        <div class="text-center mb-4">
+          <div class="w-20 h-20 mx-auto rounded-full border-2 border-green-400 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-fingerprint text-green-400 text-3xl"></i>
+          </div>
+          <div class="font-mono text-xs text-green-400">I</div>
+          <h3 class="text-2xl font-bold text-green-400 glow-green">Intégrité</h3>
+        </div>
+        <p class="text-sm text-gray-400 text-center">L'information n'est pas altérée, elle reste exacte et complète.</p>
+        <div class="mt-4 pt-4 border-t border-green-500/10">
+          <div class="text-xs text-gray-500 mb-2">Menaces :</div>
+          <div class="text-xs text-gray-400">Modification/suppression du trafic, virus, bombes logiques, erreurs humaines, portes dérobées</div>
+        </div>
+      </div>
+
+      <div class="card p-8 cursor-pointer cid-card" data-cid="D" style="border-color:rgba(255,184,0,0.3)">
+        <div class="text-center mb-4">
+          <div class="w-20 h-20 mx-auto rounded-full border-2 border-yellow-400 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-clock text-yellow-400 text-3xl"></i>
+          </div>
+          <div class="font-mono text-xs text-yellow-400">D</div>
+          <h3 class="text-2xl font-bold text-yellow-400" style="text-shadow:0 0 20px rgba(255,184,0,0.6)">Disponibilité</h3>
+        </div>
+        <p class="text-sm text-gray-400 text-center">L'information et les ressources sont accessibles en temps voulu.</p>
+        <div class="mt-4 pt-4 border-t border-yellow-500/10">
+          <div class="text-xs text-gray-500 mb-2">Menaces :</div>
+          <div class="text-xs text-gray-400">Déni de service (DoS/DDoS), pannes environnementales, matérielles, logicielles</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <h3 class="text-2xl font-bold mb-6">Contre-mesures détaillées</h3>
+    </div>
+
+    <div class="card p-8 mb-6" style="border-color:rgba(0,255,234,0.2)">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center">
+          <span class="font-bold text-cyan-400">C</span>
+        </div>
+        <h4 class="text-xl font-bold text-cyan-400">Contre-mesures pour la Confidentialité</h4>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-5 border border-cyan-500/15 rounded-lg">
+          <i class="fa-solid fa-lock text-cyan-400 text-xl mb-3"></i>
+          <h5 class="font-bold mb-2">Chiffrement</h5>
+          <p class="text-xs text-gray-400">Coder les données lors de leur transmission ou stockage, de sorte qu'elles soient illisibles.</p>
+          <div class="mt-3 p-3 bg-black/40 rounded font-mono text-xs">
+            <div class="text-gray-500">// Message clair</div>
+            <div class="text-white">"Code carte: 1234"</div>
+            <div class="text-gray-500 mt-2">// Chiffré</div>
+            <div class="text-cyan-400">%ùy8*$g》#‡∍∄</div>
+          </div>
+        </div>
+
+        <div class="p-5 border border-cyan-500/15 rounded-lg">
+          <i class="fa-solid fa-key text-cyan-400 text-xl mb-3"></i>
+          <h5 class="font-bold mb-2">Contrôle d'accès</h5>
+          <p class="text-xs text-gray-400 mb-3"><span class="text-cyan-400">Authentification</span> (vérifier l'identité) + <span class="text-cyan-400">Autorisation</span> (définir les ressources accessibles).</p>
+          <div class="text-xs space-y-1">
+            <div class="p-2 bg-black/40 rounded">
+              <div class="text-gray-500">Propriétaire</div>
+              <div class="text-cyan-400 font-mono">RWX</div>
+            </div>
+            <div class="p-2 bg-black/40 rounded">
+              <div class="text-gray-500">Groupe</div>
+              <div class="text-cyan-400 font-mono">RW-</div>
+            </div>
+            <div class="p-2 bg-black/40 rounded">
+              <div class="text-gray-500">Tous</div>
+              <div class="text-cyan-400 font-mono">R--</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-5 border border-cyan-500/15 rounded-lg">
+          <i class="fa-solid fa-list-check text-cyan-400 text-xl mb-3"></i>
+          <h5 class="font-bold mb-2">Journalisation</h5>
+          <p class="text-xs text-gray-400 mb-3">Suivi des actions des utilisateurs en fonction du temps.</p>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-2 bg-black/40 rounded text-center">
+              <div class="text-gray-500">Qui</div>
+            </div>
+            <div class="p-2 bg-black/40 rounded text-center">
+              <div class="text-gray-500">Où</div>
+            </div>
+            <div class="p-2 bg-black/40 rounded text-center">
+              <div class="text-gray-500">Quoi</div>
+            </div>
+            <div class="p-2 bg-black/40 rounded text-center">
+              <div class="text-gray-500">Quand</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-6" style="border-color:rgba(0,255,136,0.2)">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-400/30 flex items-center justify-center">
+          <span class="font-bold text-green-400">I</span>
+        </div>
+        <h4 class="text-xl font-bold text-green-400">Contre-mesures pour l'Intégrité</h4>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-5 border border-green-500/15 rounded-lg">
+          <i class="fa-solid fa-hashtag text-green-400 text-xl mb-3"></i>
+          <h5 class="font-bold mb-2">Hachage</h5>
+          <p class="text-xs text-gray-400 mb-3">Garantit que les données ne subiront aucune modification, au repos ou en transit. Fonction mathématique <span class="text-green-400">unidirectionnelle</span> simple à calculer mais extrêmement difficile à inverser.</p>
+          <div class="mt-3 p-3 bg-black/40 rounded font-mono text-xs">
+            <div class="text-gray-500">// Message</div>
+            <div class="text-white">ABC1278DEF</div>
+            <div class="text-gray-500 mt-2">// Hash (empreinte)</div>
+            <div class="text-green-400">e88$dB£23</div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="text-[10px] px-2 py-1 bg-green-500/10 rounded font-mono">MD5</span>
+            <span class="text-[10px] px-2 py-1 bg-green-500/10 rounded font-mono">SHA-1</span>
+            <span class="text-[10px] px-2 py-1 bg-green-500/10 rounded font-mono">SHA-256</span>
+            <span class="text-[10px] px-2 py-1 bg-green-500/10 rounded font-mono">SHA-512</span>
+          </div>
+        </div>
+
+        <div class="p-5 border border-green-500/15 rounded-lg">
+          <i class="fa-solid fa-check-double text-green-400 text-xl mb-3"></i>
+          <h5 class="font-bold mb-2">Contrôle de validité (Checksum / CRC)</h5>
+          <p class="text-xs text-gray-400 mb-3">Vérification de l'intégrité par comparaison des sommes de contrôle.</p>
+          <div class="mt-3 p-3 bg-black/40 rounded font-mono text-xs space-y-1">
+            <div class="text-gray-500">// Émetteur</div>
+            <div class="text-white">Données: ABC1278DEF</div>
+            <div class="text-green-400">Checksum calculé: AB123DE567_1000B</div>
+            <div class="text-gray-500 mt-2">// Récepteur</div>
+            <div class="text-white">Checksum reçu: AB123DE567_1000B</div>
+            <div class="text-green-400 mt-1">✓ Identiques → Intégrité OK</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-8 mb-6" style="border-color:rgba(255,184,0,0.2)">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-lg bg-yellow-500/10 border border-yellow-400/30 flex items-center justify-center">
+          <span class="font-bold text-yellow-400">D</span>
+        </div>
+        <h4 class="text-xl font-bold text-yellow-400">Contre-mesures pour la Disponibilité</h4>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-shield-halved text-yellow-400"></i>
+          <span class="text-sm">Tolérance aux pannes</span>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-wrench text-yellow-400"></i>
+          <span class="text-sm">Maintenance des équipements</span>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-arrows-rotate text-yellow-400"></i>
+          <span class="text-sm">Mises à jour OS et logiciels</span>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-cloud-arrow-up text-yellow-400"></i>
+          <span class="text-sm">Sauvegarde</span>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-eye text-yellow-400"></i>
+          <span class="text-sm">Surveillance des activités</span>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg flex items-center gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-yellow-400"></i>
+          <span class="text-sm">Planification des sinistres</span>
+        </div>
+      </div>
+
+      <div class="p-6 bg-yellow-500/5 border border-yellow-400/30 rounded-lg">
+        <div class="flex items-center gap-3 mb-2">
+          <i class="fa-solid fa-star text-yellow-400"></i>
+          <h5 class="font-bold text-yellow-400">Le concept des « cinq neuf »</h5>
+        </div>
+        <p class="text-sm text-gray-400 mb-4">L'une des pratiques de haute disponibilité les plus courantes.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="text-center p-4 bg-black/40 rounded">
+            <div class="text-4xl font-bold text-yellow-400 glow-cyan" style="text-shadow:0 0 20px rgba(255,184,0,0.6)">99,999%</div>
+            <div class="text-xs text-gray-500 mt-1">Disponibilité</div>
+          </div>
+          <div class="text-center p-4 bg-black/40 rounded">
+            <div class="text-4xl font-bold text-yellow-400" style="text-shadow:0 0 20px rgba(255,184,0,0.6)">&lt; 5,26 min</div>
+            <div class="text-xs text-gray-500 mt-1">Temps d'interruption / an</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cube" class="py-24 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">CUBE DE McCUMBER</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Le cube de <span class="text-cyan-400">McCumber</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Une vision tridimensionnelle de la sécurité de l'information. Survolez le cube pour le mettre en pause.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="scene" id="cubeScene">
+          <div class="cube" id="mcCube">
+            <div class="face front">
+              <div class="font-mono text-xs text-cyan-400 mb-1">TRIO CID</div>
+              <i class="fa-solid fa-shield text-cyan-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Confidentialité</div>
+              <div class="text-sm font-bold">Intégrité</div>
+              <div class="text-sm font-bold">Disponibilité</div>
+            </div>
+            <div class="face back">
+              <div class="font-mono text-xs text-green-400 mb-1">ÉTATS DONNÉES</div>
+              <i class="fa-solid fa-database text-green-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Stockage</div>
+              <div class="text-sm font-bold">Traitement</div>
+              <div class="text-sm font-bold">Transmission</div>
+            </div>
+            <div class="face right">
+              <div class="font-mono text-xs text-yellow-400 mb-1">MESURES</div>
+              <i class="fa-solid fa-people-group text-yellow-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Politique</div>
+              <div class="text-sm font-bold">Bonne pratique</div>
+              <div class="text-sm font-bold">Personnes</div>
+            </div>
+            <div class="face left">
+              <div class="font-mono text-xs text-red-400 mb-1">PROTECTION</div>
+              <i class="fa-solid fa-lock text-red-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Données</div>
+              <div class="text-xs text-gray-400 mt-2">3 états</div>
+            </div>
+            <div class="face top">
+              <div class="font-mono text-xs text-cyan-400 mb-1">HAUTE</div>
+              <i class="fa-solid fa-arrow-up text-cyan-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Sécurité</div>
+            </div>
+            <div class="face bottom">
+              <div class="font-mono text-xs text-gray-500 mb-1">BASE</div>
+              <i class="fa-solid fa-arrow-down text-gray-400 text-2xl mb-2"></i>
+              <div class="text-sm font-bold">Infrastructure</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-6" style="border-color:rgba(0,255,234,0.3)">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center">
+              <i class="fa-solid fa-shield text-cyan-400"></i>
+            </div>
+            <h3 class="text-lg font-bold">Axe 1 — Trio CID</h3>
+          </div>
+          <p class="text-sm text-gray-400">Confidentialité, Intégrité, Disponibilité : les principes fondateurs de la protection des données.</p>
+        </div>
+
+        <div class="card p-6" style="border-color:rgba(0,255,136,0.3)">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-400/30 flex items-center justify-center">
+              <i class="fa-solid fa-database text-green-400"></i>
+            </div>
+            <h3 class="text-lg font-bold">Axe 2 — États des données (S²T)</h3>
+          </div>
+          <p class="text-sm text-gray-400">Assurer la protection des données dans leurs trois états :</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs font-mono">Stockage</span>
+            <span class="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs font-mono">Traitement</span>
+            <span class="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded text-xs font-mono">Transmission</span>
+          </div>
+        </div>
+
+        <div class="card p-6" style="border-color:rgba(255,184,0,0.3)">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 border border-yellow-400/30 flex items-center justify-center">
+              <i class="fa-solid fa-people-group text-yellow-400"></i>
+            </div>
+            <h3 class="text-lg font-bold">Axe 3 — Mesures & Personnes</h3>
+          </div>
+          <p class="text-sm text-gray-400 mb-3">Les outils technologiques seuls ne suffisent pas. Il faut développer :</p>
+          <ul class="text-sm text-gray-400 space-y-1">
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400 text-xs"></i>Des <span class="text-yellow-400">politiques</span> de bonnes conduites</li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400 text-xs"></i>Des <span class="text-yellow-400">bonnes pratiques</span></li>
+            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400 text-xs"></i>L'implication des <span class="text-yellow-400">personnes</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="py-24 border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="mb-16 text-center">
+      <span class="section-tag">ÉVALUATION</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Testez vos <span class="text-cyan-400 glow-cyan">connaissances</span></h2>
+      <p class="text-gray-400 mt-4">10 questions pour valider votre compréhension du cours.</p>
+    </div>
+
+    <div class="card p-8">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-mono text-xs text-gray-500">
+          QUESTION <span id="qNum" class="text-cyan-400">1</span> / <span id="qTotal">10</span>
+        </div>
+        <div class="font-mono text-xs">
+          SCORE: <span id="score" class="text-green-400">0</span>
+        </div>
+      </div>
+      <div class="progress-bar mb-8">
+        <div id="progressFill" class="progress-fill" style="width:10%"></div>
+      </div>
+
+      <div id="quizContent">
+        <h3 id="questionText" class="text-xl font-bold mb-6 leading-relaxed"></h3>
+        <div id="options" class="space-y-3"></div>
+      </div>
+
+      <div id="quizResult" class="hidden text-center py-8">
+        <div class="w-24 h-24 mx-auto mb-6 rounded-full border-2 border-cyan-400 flex items-center justify-center">
+          <i id="resultIcon" class="fa-solid fa-trophy text-cyan-400 text-4xl"></i>
+        </div>
+        <h3 class="text-3xl font-bold mb-2">Quiz terminé !</h3>
+        <p class="text-gray-400 mb-6">Votre score final</p>
+        <div class="text-6xl font-bold mb-2">
+          <span id="finalScore" class="text-cyan-400 glow-cyan">0</span>
+          <span class="text-gray-500 text-3xl">/10</span>
+        </div>
+        <p id="resultMessage" class="text-gray-400 mb-8"></p>
+        <button onclick="restartQuiz()" class="btn-cyber">RECOMMENCER</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-12 border-t border-cyan-500/10 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-9 h-9 border border-cyan-400 rounded flex items-center justify-center">
+            <i class="fa-solid fa-shield-halved text-cyan-400 text-sm"></i>
+          </div>
+          <div class="font-mono text-cyan-400">SEC.NET</div>
+        </div>
+        <p class="text-sm text-gray-500 leading-relaxed">Cours interactif de Sécurité des Réseaux — Basé sur le cours de Pr. Youssou FAYE.</p>
+      </div>
+      <div>
+        <h4 class="font-mono text-xs text-gray-500 mb-3">INSTITUTION</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>Université Assane Seck de Ziguinchor</li>
+          <li>UFR Sciences & Technologies</li>
+          <li>Département d'Informatique</li>
+          <li>Licence 3 Ingénierie Informatique</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-mono text-xs text-gray-500 mb-3">ANNÉE</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li>2025-2026</li>
+          <li>Chapitres 1 & 2</li>
+          <li class="text-cyan-400">Site interactif éducatif</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-cyan-500/10 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-xs text-gray-600 font-mono">// END_OF_TRANSMISSION</p>
+      <p class="text-xs text-gray-600">Conçu avec <span class="text-red-400">♥</span> pour l'apprentissage</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const particlesContainer = document.getElementById('particles');
+  if(particlesContainer) {
+    for(let i=0;i<30;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random()*100 + '%';
+      p.style.animationDelay = Math.random()*8 + 's';
+      p.style.animationDuration = (6 + Math.random()*6) + 's';
+      particlesContainer.appendChild(p);
+    }
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(()=>t.classList.remove('show'), 2500);
+  }
+
+  function toggleCard(el){
+    el.style.transform = 'scale(1.02)';
+    setTimeout(()=>el.style.transform = '', 300);
+  }
+
+  function selectTree(el){
+    document.querySelectorAll('.tree-ex').forEach(e=>e.classList.remove('active'));
+    el.classList.add('active');
+    const risk = el.dataset.risk;
+    showToast(`Risque sélectionné : ${risk}`);
+  }
+
+  document.querySelectorAll('.matrix-cell').forEach(cell=>{
+    cell.addEventListener('mouseenter', ()=>{
+      const info = cell.dataset.info;
+      const infoBox = document.getElementById('matrixInfo');
+      const parts = info.split('|');
+      infoBox.innerHTML = `
+        <div class="font-mono text-xs text-cyan-400 mb-3">INFORMATIONS</div>
+        <div class="text-2xl font-bold mb-3" style="color:${cell.style.color || '#00ffea'}">${parts[0].trim()}</div>
+        <p class="text-gray-400">${parts[1] ? parts[1].trim() : ''}</p>
+        <div class="mt-6 pt-6 border-t border-cyan-500/10">
+          <p class="text-xs text-gray-500">Cliquez pour explorer d'autres cellules de la matrice.</p>
+        </div>
+      `;
+    });
+  });
+
+  const cube = document.getElementById('mcCube');
+  const cubeScene = document.getElementById('cubeScene');
+  if(cubeScene){
+    cubeScene.addEventListener('mouseenter', ()=> cube.classList.add('paused'));
+    cubeScene.addEventListener('mouseleave', ()=> cube.classList.remove('paused'));
+  }
+
+  document.querySelectorAll('.cid-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const cid = card.dataset.cid;
+      const messages = {
+        'C': 'Confidentialité : protéger l\'accès aux données',
+        'I': 'Intégrité : garantir l\'exactitude des données',
+        'D': 'Disponibilité : assurer l\'accès aux données'
+      };
+      showToast(messages[cid]);
+    });
+  });
+
+  const quizData = [
+    {
+      q: "Qu'est-ce qu'un Système d'Information (SI) ?",
+      options: [
+        "Ensemble des moyens techniques pour faire fonctionner un système",
+        "Ensemble organisé des moyens humains et techniques pour acquérir, stocker, exploiter et diffuser les informations",
+        "Ensemble des mesures de sécurité d'une entreprise",
+        "Ensemble des logiciels antivirus"
+      ],
+      correct: 1
+    },
+    {
+      q: "Que cherche à garantir la cybersécurité ?",
+      options: [
+        "Uniquement la confidentialité des données",
+        "La performance des réseaux",
+        "Les propriétés des actifs contre les risques affectant la sécurité",
+        "La vitesse de transmission"
+      ],
+      correct: 2
+    },
+    {
+      q: "Quels sont les trois éléments du trio CID ?",
+      options: [
+        "Contrôle, Inspection, Détection",
+        "Confidentialité, Intégrité, Disponibilité",
+        "Cryptage, Identification, Distribution",
+        "Certification, Innovation, Déploiement"
+      ],
+      correct: 1
+    },
+    {
+      q: "Quelle est la différence principale entre un pirate et un hacker ?",
+      options: [
+        "Aucune, ce sont des synonymes",
+        "Le pirate travaille seul, le hacker en groupe",
+        "Ils ont des éthiques différentes",
+        "Le pirate utilise des ordinateurs, le hacker non"
+      ],
+      correct: 2
+    },
+    {
+      q: "Un hacker au chapeau blanc (White Hat) a pour objectif de :",
+      options: [
+        "Exploiter des vulnérabilités à des fins financières illégales",
+        "Découvrir les faiblesses du système pour améliorer la sécurité, avec l'autorisation du propriétaire",
+        "Publier les vulnérabilités sur Internet",
+        "Détruire les systèmes qu'il pénètre"
+      ],
+      correct: 1
+    },
+    {
+      q: "Un risque est défini comme :",
+      options: [
+        "Le couple (menace, vulnérabilité) qui impacte sur l'information",
+        "Une faiblesse qui expose un système à une attaque",
+        "La possibilité qu'un événement nuisible survienne",
+        "L'exploitation délibérée d'une faiblesse"
+      ],
+      correct: 0
+    },
+    {
+      q: "Comment calcule-t-on la criticité (C) d'un risque ?",
+      options: [
+        "C = O + G",
+        "C = O × G",
+        "C = O / G",
+        "C = O - G"
+      ],
+      correct: 1
+    },
+    {
+      q: "Le modèle ISO/CEI 27005 est à la cybersécurité ce que le modèle ___ est aux ingénieurs de réseaux.",
+      options: [
+        "TCP/IP",
+        "OSI",
+        "HTTP",
+        "DNS"
+      ],
+      correct: 1
+    },
+    {
+      q: "Quelle contre-mesure assure l'intégrité des données ?",
+      options: [
+        "Le chiffrement",
+        "L'authentification",
+        "Le hachage",
+        "La journalisation"
+      ],
+      correct: 2
+    },
+    {
+      q: "Le concept des « cinq neuf » correspond à une disponibilité de :",
+      options: [
+        "95,999 % (temps d'interruption < 5,26 min par an)",
+        "99,999 % (temps d'interruption < 5,26 min par an)",
+        "99,99 % (temps d'interruption < 5,26 heures par an)",
+        "99,9999 % (temps d'interruption < 5 min par an)"
+      ],
+      correct: 1
+    }
+  ];
+
+  let currentQ = 0;
+  let score = 0;
+  let answered = false;
+
+  function loadQuestion(){
+    answered = false;
+    const q = quizData[currentQ];
+    document.getElementById('qNum').textContent = currentQ + 1;
+    document.getElementById('qTotal').textContent = quizData.length;
+    document.getElementById('progressFill').style.width = ((currentQ + 1) / quizData.length * 100) + '%';
+    document.getElementById('questionText').textContent = q.q;
+    
+    const optsContainer = document.getElementById('options');
+    optsContainer.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const div = document.createElement('div');
+      div.className = 'quiz-option flex items-center gap-3';
+      div.innerHTML = `
+        <span class="font-mono text-xs text-cyan-400">${String.fromCharCode(65+i)}</span>
+        <span class="text-sm">${opt}</span>
+      `;
+      div.onclick = () => selectOption(i, div);
+      optsContainer.appendChild(div);
+    });
+  }
+
+  function selectOption(idx, el){
+    if(answered) return;
+    answered = true;
+    const q = quizData[currentQ];
+    const allOpts = document.querySelectorAll('.quiz-option');
+    allOpts.forEach(o => o.classList.add('disabled'));
+    
+    if(idx === q.correct){
+      el.classList.add('correct');
+      score++;
+      document.getElementById('score').textContent = score;
+    } else {
+      el.classList.add('wrong');
+      allOpts[q.correct].classList.add('correct');
+    }
+    
+    setTimeout(() => {
+      currentQ++;
+      if(currentQ < quizData.length){
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }, 1500);
+  }
+
+  function showResult(){
+    document.getElementById('quizContent').classList.add('hidden');
+    document.getElementById('quizResult').classList.remove('hidden');
+    document.getElementById('finalScore').textContent = score;
+    
+    let msg = '';
+    let icon = 'fa-trophy';
+    if(score === 10){
+      msg = 'Parfait ! Vous maîtrisez parfaitement les bases de la sécurité des réseaux.';
+    } else if(score >= 8){
+      msg = 'Excellent travail ! Vous avez une très bonne compréhension du cours.';
+    } else if(score >= 6){
+      msg = 'Bon travail ! Continuez à réviser pour approfondir vos connaissances.';
+    } else if(score >= 4){
+      msg = 'Passable. Il est recommandé de revoir le cours en détail.';
+    } else {
+      msg = 'À retravailler. Reprenez le cours depuis le début.';
+      icon = 'fa-book';
+    }
+    document.getElementById('resultMessage').textContent = msg;
+    document.getElementById('resultIcon').className = `fa-solid ${icon} text-cyan-400 text-4xl`;
+  }
+
+  function restartQuiz(){
+    currentQ = 0;
+    score = 0;
+    document.getElementById('score').textContent = '0';
+    document.getElementById('quizContent').classList.remove('hidden');
+    document.getElementById('quizResult').classList.add('hidden');
+    loadQuestion();
+  }
+
+  loadQuestion();
+</script>
+</body>
+</html>
