@@ -11,16 +11,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root{
-    --bg:#06080d;
-    --bg-2:#0b1018;
-    --fg:#e6f1ff;
-    --muted:#7a8aa3;
+    --bg:#0f1621;
+    --bg-2:#161f2e;
+    --fg:#eef4ff;
+    --muted:#96a6c2;
     --accent:#00ffea;
     --accent-2:#00ff88;
     --danger:#ff3366;
     --warning:#ffb800;
-    --card:rgba(15,22,34,0.7);
-    --border:rgba(0,255,234,0.15);
+    --card:rgba(26,35,52,0.72);
+    --border:rgba(0,255,234,0.18);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -292,6 +292,167 @@
   @media (max-width:768px){
     .scene{transform:scale(0.8)}
   }
+
+  /* ==== Bloc réutilisable: accordéon (chapitres / TP) ==== */
+  details.acc{
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(22,31,46,0.5);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  details.acc summary{
+    cursor:pointer;
+    list-style:none;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    font-weight:600;
+    transition:background .2s;
+  }
+  details.acc summary::-webkit-details-marker{display:none}
+  details.acc summary:hover{background:rgba(0,255,234,0.04)}
+  details.acc summary::after{
+    content:'\002B';
+    font-family:'JetBrains Mono',monospace;
+    font-size:20px;
+    color:var(--accent);
+    transition:transform .25s;
+    flex-shrink:0;
+  }
+  details.acc[open] summary::after{transform:rotate(45deg)}
+  details.acc .acc-body{padding:0 20px 22px 20px;color:var(--muted)}
+
+  /* ==== Bloc réutilisable: code / terminal ==== */
+  .code-block{
+    background:#0a0f18;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 18px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    line-height:1.7;
+    color:#8effea;
+    overflow-x:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+    margin:10px 0;
+  }
+  .code-block .cmt{color:#6b7a94}
+
+  /* ==== Bloc réutilisable: item de question (lecture seule, pas de correction) ==== */
+  .qa-item{
+    padding:10px 14px;
+    border-left:2px solid var(--border);
+    margin-bottom:8px;
+    font-size:14px;
+    color:#cdd8ec;
+  }
+
+  /* ==== Carte index (chapitres / TP) cliquable ==== */
+  .index-card{
+    display:block;
+    padding:20px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(22,31,46,0.5);
+    transition:all .3s;
+    text-decoration:none;
+    color:inherit;
+  }
+  .index-card:hover{
+    border-color:var(--accent);
+    transform:translateY(-3px);
+    box-shadow:0 14px 30px -10px rgba(0,255,234,0.15);
+  }
+
+  /* ==== Menu déroulant desktop (Plan du cours / TD / TP) ==== */
+  .nav-dropdown{position:relative}
+  .dropdown-trigger{
+    display:flex;align-items:center;gap:6px;
+    background:none;border:none;cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .dropdown-trigger i{transition:transform .25s}
+  .nav-dropdown:hover .dropdown-trigger i{transform:rotate(180deg)}
+  .dropdown-panel{
+    position:absolute;top:calc(100% + 10px);left:0;
+    min-width:290px;
+    background:rgba(9,13,22,0.98);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px;
+    opacity:0;visibility:hidden;
+    transform:translateY(8px);
+    transition:opacity .2s,transform .2s,visibility .2s;
+    z-index:200;
+    box-shadow:0 24px 50px -12px rgba(0,0,0,0.65);
+  }
+  .nav-dropdown:hover .dropdown-panel{opacity:1;visibility:visible;transform:translateY(0)}
+  .dropdown-row{position:relative}
+  .dropdown-link{
+    display:flex;align-items:center;gap:8px;
+    padding:11px 12px;border-radius:8px;
+    font-size:13px;color:var(--fg);
+    text-decoration:none;
+    transition:background .2s,color .2s;
+    white-space:nowrap;
+  }
+  .dropdown-link:hover{background:rgba(0,255,234,0.08);color:var(--accent)}
+  .dropdown-link .num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0}
+  .dropdown-link.disabled{color:#556076;cursor:not-allowed}
+  .dropdown-link.disabled .num{color:#556076}
+  .dropdown-link.disabled:hover{background:none;color:#556076}
+  .dropdown-link .caret-right{margin-left:auto;font-size:10px;opacity:.6}
+  .soon-tag{
+    margin-left:auto;flex-shrink:0;
+    font-family:'JetBrains Mono',monospace;font-size:9px;
+    padding:3px 7px;border:1px solid rgba(255,184,0,0.35);border-radius:5px;color:var(--warning);
+    letter-spacing:.05em;
+  }
+  .submenu{
+    position:absolute;left:100%;top:0;
+    min-width:250px;
+    background:rgba(9,13,22,0.98);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px;
+    opacity:0;visibility:hidden;
+    transform:translateX(8px);
+    transition:opacity .2s,transform .2s,visibility .2s;
+    z-index:210;
+    box-shadow:0 24px 50px -12px rgba(0,0,0,0.65);
+  }
+  .dropdown-row:hover .submenu{opacity:1;visibility:visible;transform:translateX(0)}
+  .submenu-link{
+    display:block;padding:9px 12px;border-radius:7px;
+    font-size:12.5px;color:var(--muted);text-decoration:none;
+    transition:all .2s;
+  }
+  .submenu-link:hover{background:rgba(0,255,234,0.08);color:var(--accent)}
+
+  /* ==== Menu mobile ==== */
+  #mobileMenuBtn{background:none;cursor:pointer}
+  #mobileMenu{transition:opacity .25s;}
+  #mobileMenu a.mob-link{
+    display:block;padding:10px 12px;border-radius:8px;
+    font-size:13.5px;color:var(--fg);text-decoration:none;
+  }
+  #mobileMenu a.mob-link:hover{background:rgba(0,255,234,0.06);color:var(--accent)}
+  #mobileMenu .mob-link.disabled{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 12px;font-size:13.5px;color:#556076;
+  }
+  #mobileMenu details.acc-sub{
+    border:none;background:none;margin-bottom:0;border-radius:0;
+  }
+  #mobileMenu details.acc-sub summary{
+    padding:9px 12px;font-size:12.5px;color:var(--muted);font-weight:500;
+  }
+  #mobileMenu details.acc-sub summary::after{font-size:14px}
+  #mobileMenu details.acc-sub .acc-body{padding:0 0 6px 18px}
 </style>
 </head>
 <body class="bg-grid">
@@ -312,17 +473,148 @@
       </div>
     </div>
     <div class="hidden md:flex items-center gap-1">
-      <a href="#intro" class="nav-link font-mono">01_INTRO</a>
-      <a href="#cyber" class="nav-link font-mono">02_CYBER</a>
-      <a href="#hackers" class="nav-link font-mono">03_HACKERS</a>
-      <a href="#risques" class="nav-link font-mono">04_RISQUES</a>
-      <a href="#matrice" class="nav-link font-mono">05_MATRICE</a>
-      <a href="#iso" class="nav-link font-mono">06_ISO</a>
-      <a href="#cid" class="nav-link font-mono">07_CID</a>
-      <a href="#cube" class="nav-link font-mono">08_CUBE</a>
-      <a href="#quiz" class="nav-link font-mono">09_QUIZ</a>
+      <a href="#intro" class="nav-link font-mono">ACCUEIL</a>
+
+      <!-- ==== Dropdown : PLAN DU COURS ==== -->
+      <div class="nav-dropdown">
+        <button class="nav-link font-mono dropdown-trigger">PLAN DU COURS <i class="fa-solid fa-chevron-down text-[9px]"></i></button>
+        <div class="dropdown-panel">
+          <div class="dropdown-row">
+            <a href="#intro" class="dropdown-link"><span class="num">01</span>Introduction</a>
+          </div>
+          <div class="dropdown-row">
+            <span class="dropdown-link"><span class="num" style="color:var(--accent-2)">02</span>Généralités sur la sécurité<i class="fa-solid fa-caret-right caret-right"></i></span>
+            <div class="submenu">
+              <a href="#cyber" class="submenu-link">Cybersécurité</a>
+              <a href="#hackers" class="submenu-link">Typologie des hackers</a>
+              <a href="#risques" class="submenu-link">Risques, menaces & vulnérabilités</a>
+              <a href="#matrice" class="submenu-link">Matrice des risques</a>
+              <a href="#iso" class="submenu-link">Norme ISO/CEI 27005</a>
+              <a href="#cid" class="submenu-link">Triade CID</a>
+              <a href="#cube" class="submenu-link">Cube de McCumber</a>
+            </div>
+          </div>
+          <div class="dropdown-row">
+            <span class="dropdown-link"><span class="num">03</span>La Cryptographie<i class="fa-solid fa-caret-right caret-right"></i></span>
+            <div class="submenu">
+              <a href="#crypto-intro" class="submenu-link">Introduction & définitions</a>
+              <a href="#crypto-sym" class="submenu-link">Cryptographie symétrique</a>
+              <a href="#crypto-asym" class="submenu-link">Cryptographie asymétrique</a>
+              <a href="#crypto-hash" class="submenu-link">Le hachage</a>
+              <a href="#crypto-sig" class="submenu-link">Signatures numériques</a>
+              <a href="#crypto-proto" class="submenu-link">Protocoles cryptographiques</a>
+              <a href="#crypto-cert" class="submenu-link">Certificats numériques</a>
+              <a href="#crypto-pwd" class="submenu-link">Sécurité des mots de passe</a>
+            </div>
+          </div>
+          <div class="dropdown-row">
+            <span class="dropdown-link disabled"><span class="num">04</span>Protocoles de sécurité<span class="soon-tag">bientôt</span></span>
+          </div>
+          <div class="dropdown-row">
+            <span class="dropdown-link disabled"><span class="num">05</span>Sécurité des architectures<span class="soon-tag">bientôt</span></span>
+          </div>
+          <div class="dropdown-row">
+            <span class="dropdown-link disabled"><span class="num">06</span>Supervision de réseaux<span class="soon-tag">bientôt</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==== Dropdown : TD ==== -->
+      <div class="nav-dropdown">
+        <button class="nav-link font-mono dropdown-trigger">TD <i class="fa-solid fa-chevron-down text-[9px]"></i></button>
+        <div class="dropdown-panel" style="min-width:280px">
+          <div class="dropdown-row"><a href="#td1" class="dropdown-link"><span class="num">TD1</span>Cryptographie classique</a></div>
+          <div class="dropdown-row"><a href="#td2" class="dropdown-link"><span class="num">TD2</span>Cryptographie moderne</a></div>
+          <div class="dropdown-row"><a href="#td3" class="dropdown-link"><span class="num">TD3</span>Protocoles cryptographiques</a></div>
+          <div class="dropdown-row"><a href="#td4" class="dropdown-link"><span class="num">TD4</span>Protocoles de sécurité</a></div>
+        </div>
+      </div>
+
+      <!-- ==== Dropdown : TP ==== -->
+      <div class="nav-dropdown">
+        <button class="nav-link font-mono dropdown-trigger">TP <i class="fa-solid fa-chevron-down text-[9px]"></i></button>
+        <div class="dropdown-panel" style="min-width:280px">
+          <div class="dropdown-row"><a href="#tp1" class="dropdown-link"><span class="num">TP1</span>OpenSSL</a></div>
+          <div class="dropdown-row"><a href="#tp2" class="dropdown-link"><span class="num">TP2</span>Wireshark & TLS</a></div>
+          <div class="dropdown-row"><a href="#tp3" class="dropdown-link"><span class="num">TP3</span>Hachage & attaques</a></div>
+          <div class="dropdown-row"><a href="#tp4" class="dropdown-link"><span class="num">TP4</span>Proxy Squid + SquidGuard</a></div>
+        </div>
+      </div>
+
+      <a href="#quiz" class="nav-link font-mono">QUIZ</a>
     </div>
-    <a href="#quiz" class="btn-cyber text-xs hidden sm:block">START QUIZ</a>
+
+    <div class="flex items-center gap-3">
+      <a href="#quiz" class="btn-cyber text-xs hidden sm:block">START QUIZ</a>
+      <button id="mobileMenuBtn" class="md:hidden w-9 h-9 flex items-center justify-center border border-cyan-500/25 rounded" onclick="toggleMobileMenu()">
+        <i class="fa-solid fa-bars text-cyan-400" id="mobileMenuIcon"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==== Menu mobile (Plan du cours / TD / TP) ==== -->
+  <div id="mobileMenu" class="md:hidden hidden fixed top-[65px] left-0 right-0 bottom-0 z-40 bg-black/95 backdrop-blur-lg overflow-y-auto px-4 py-4 border-t border-cyan-500/10">
+    <a href="#intro" class="mob-link font-mono" onclick="closeMobileMenu()">ACCUEIL</a>
+
+    <details class="acc mt-2" open>
+      <summary class="font-mono text-sm">PLAN DU COURS</summary>
+      <div class="acc-body">
+        <a href="#intro" class="mob-link" onclick="closeMobileMenu()">01 · Introduction</a>
+
+        <details class="acc-sub">
+          <summary>02 · Généralités sur la sécurité</summary>
+          <div class="acc-body">
+            <a href="#cyber" class="mob-link" onclick="closeMobileMenu()">Cybersécurité</a>
+            <a href="#hackers" class="mob-link" onclick="closeMobileMenu()">Typologie des hackers</a>
+            <a href="#risques" class="mob-link" onclick="closeMobileMenu()">Risques, menaces & vulnérabilités</a>
+            <a href="#matrice" class="mob-link" onclick="closeMobileMenu()">Matrice des risques</a>
+            <a href="#iso" class="mob-link" onclick="closeMobileMenu()">Norme ISO/CEI 27005</a>
+            <a href="#cid" class="mob-link" onclick="closeMobileMenu()">Triade CID</a>
+            <a href="#cube" class="mob-link" onclick="closeMobileMenu()">Cube de McCumber</a>
+          </div>
+        </details>
+
+        <details class="acc-sub">
+          <summary>03 · La Cryptographie</summary>
+          <div class="acc-body">
+            <a href="#crypto-intro" class="mob-link" onclick="closeMobileMenu()">Introduction & définitions</a>
+            <a href="#crypto-sym" class="mob-link" onclick="closeMobileMenu()">Cryptographie symétrique</a>
+            <a href="#crypto-asym" class="mob-link" onclick="closeMobileMenu()">Cryptographie asymétrique</a>
+            <a href="#crypto-hash" class="mob-link" onclick="closeMobileMenu()">Le hachage</a>
+            <a href="#crypto-sig" class="mob-link" onclick="closeMobileMenu()">Signatures numériques</a>
+            <a href="#crypto-proto" class="mob-link" onclick="closeMobileMenu()">Protocoles cryptographiques</a>
+            <a href="#crypto-cert" class="mob-link" onclick="closeMobileMenu()">Certificats numériques</a>
+            <a href="#crypto-pwd" class="mob-link" onclick="closeMobileMenu()">Sécurité des mots de passe</a>
+          </div>
+        </details>
+
+        <div class="mob-link disabled">04 · Protocoles de sécurité<span class="soon-tag">bientôt</span></div>
+        <div class="mob-link disabled">05 · Sécurité des architectures<span class="soon-tag">bientôt</span></div>
+        <div class="mob-link disabled">06 · Supervision de réseaux<span class="soon-tag">bientôt</span></div>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary class="font-mono text-sm">TD</summary>
+      <div class="acc-body">
+        <a href="#td1" class="mob-link" onclick="closeMobileMenu()">TD1 · Cryptographie classique</a>
+        <a href="#td2" class="mob-link" onclick="closeMobileMenu()">TD2 · Cryptographie moderne</a>
+        <a href="#td3" class="mob-link" onclick="closeMobileMenu()">TD3 · Protocoles cryptographiques</a>
+        <a href="#td4" class="mob-link" onclick="closeMobileMenu()">TD4 · Protocoles de sécurité</a>
+      </div>
+    </details>
+
+    <details class="acc">
+      <summary class="font-mono text-sm">TP</summary>
+      <div class="acc-body">
+        <a href="#tp1" class="mob-link" onclick="closeMobileMenu()">TP1 · OpenSSL</a>
+        <a href="#tp2" class="mob-link" onclick="closeMobileMenu()">TP2 · Wireshark & TLS</a>
+        <a href="#tp3" class="mob-link" onclick="closeMobileMenu()">TP3 · Hachage & attaques</a>
+        <a href="#tp4" class="mob-link" onclick="closeMobileMenu()">TP4 · Proxy Squid + SquidGuard</a>
+      </div>
+    </details>
+
+    <a href="#quiz" class="mob-link font-mono mt-2" onclick="closeMobileMenu()">QUIZ</a>
   </div>
 </nav>
 
@@ -410,53 +702,56 @@
       <h2 class="font-display text-3xl md:text-5xl font-bold mt-4 mb-12">Six chapitres, <span class="text-cyan-400">une mission</span></h2>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="card p-6">
+      <a href="#intro" class="card p-6 block">
         <div class="flex items-start justify-between mb-3">
           <span class="font-mono text-xs text-cyan-400">CHAPITRE 01</span>
           <i class="fa-solid fa-circle-info text-cyan-400"></i>
         </div>
         <h3 class="text-xl font-bold mb-2">Introduction</h3>
         <p class="text-gray-400 text-sm">Définitions fondamentales, cybersécurité et typologie des pirates.</p>
-      </div>
-      <div class="card p-6" style="border-color:rgba(0,255,136,0.2)">
+      </a>
+      <a href="#cyber" class="card p-6 block" style="border-color:rgba(0,255,136,0.2)">
         <div class="flex items-start justify-between mb-3">
           <span class="font-mono text-xs text-green-400">CHAPITRE 02</span>
           <i class="fa-solid fa-shield-halved text-green-400"></i>
         </div>
         <h3 class="text-xl font-bold mb-2">Généralités sur la Sécurité</h3>
         <p class="text-gray-400 text-sm">Risques, vulnérabilités, menaces, trio CID et contre-mesures.</p>
-      </div>
-      <div class="card p-6">
+      </a>
+      <a href="#crypto" class="card p-6 block">
         <div class="flex items-start justify-between mb-3">
           <span class="font-mono text-xs text-cyan-400">CHAPITRE 03</span>
           <i class="fa-solid fa-key text-cyan-400"></i>
         </div>
         <h3 class="text-xl font-bold mb-2">La Cryptographie</h3>
-        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
-      </div>
-      <div class="card p-6">
+        <p class="text-gray-400 text-sm">Symétrique, asymétrique, hachage, signatures, protocoles et certificats numériques.</p>
+      </a>
+      <div class="card p-6 opacity-50 cursor-not-allowed" style="border-style:dashed">
         <div class="flex items-start justify-between mb-3">
-          <span class="font-mono text-xs text-cyan-400">CHAPITRE 04</span>
-          <i class="fa-solid fa-handshake text-cyan-400"></i>
+          <span class="font-mono text-xs text-gray-500">CHAPITRE 04</span>
+          <i class="fa-solid fa-handshake text-gray-500"></i>
         </div>
-        <h3 class="text-xl font-bold mb-2">Protocoles de sécurité</h3>
-        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+        <h3 class="text-xl font-bold mb-2 text-gray-400">Protocoles de sécurité</h3>
+        <p class="text-gray-500 text-sm">À venir dans le cours complet.</p>
+        <span class="soon-tag mt-3 inline-block" style="margin-left:0">bientôt</span>
       </div>
-      <div class="card p-6">
+      <div class="card p-6 opacity-50 cursor-not-allowed" style="border-style:dashed">
         <div class="flex items-start justify-between mb-3">
-          <span class="font-mono text-xs text-cyan-400">CHAPITRE 05</span>
-          <i class="fa-solid fa-sitemap text-cyan-400"></i>
+          <span class="font-mono text-xs text-gray-500">CHAPITRE 05</span>
+          <i class="fa-solid fa-sitemap text-gray-500"></i>
         </div>
-        <h3 class="text-xl font-bold mb-2">Sécurité des architectures</h3>
-        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+        <h3 class="text-xl font-bold mb-2 text-gray-400">Sécurité des architectures</h3>
+        <p class="text-gray-500 text-sm">À venir dans le cours complet.</p>
+        <span class="soon-tag mt-3 inline-block" style="margin-left:0">bientôt</span>
       </div>
-      <div class="card p-6">
+      <div class="card p-6 opacity-50 cursor-not-allowed" style="border-style:dashed">
         <div class="flex items-start justify-between mb-3">
-          <span class="font-mono text-xs text-cyan-400">CHAPITRE 06</span>
-          <i class="fa-solid fa-chart-line text-cyan-400"></i>
+          <span class="font-mono text-xs text-gray-500">CHAPITRE 06</span>
+          <i class="fa-solid fa-chart-line text-gray-500"></i>
         </div>
-        <h3 class="text-xl font-bold mb-2">Supervision de réseaux</h3>
-        <p class="text-gray-400 text-sm">À venir dans le cours complet.</p>
+        <h3 class="text-xl font-bold mb-2 text-gray-400">Supervision de réseaux</h3>
+        <p class="text-gray-500 text-sm">À venir dans le cours complet.</p>
+        <span class="soon-tag mt-3 inline-block" style="margin-left:0">bientôt</span>
       </div>
     </div>
   </div>
@@ -1620,7 +1915,7 @@
         <p class="text-gray-400 mb-6">Votre score final</p>
         <div class="text-6xl font-bold mb-2">
           <span id="finalScore" class="text-cyan-400 glow-cyan">0</span>
-          <span class="text-gray-500 text-3xl">/10</span>
+          <span class="text-gray-500 text-3xl">/<span id="totalScore">10</span></span>
         </div>
         <p id="resultMessage" class="text-gray-400 mb-8"></p>
         <button onclick="restartQuiz()" class="btn-cyber">RECOMMENCER</button>
@@ -1628,6 +1923,1110 @@
     </div>
   </div>
 </section>
+
+<!-- ============================================================ -->
+<!-- CHAPITRE 3 : LA CRYPTOGRAPHIE                                 -->
+<!-- Pour ajouter un futur Chapitre 4 : dupliquer ce bloc <section> -->
+<!-- en changeant id="crypto" -> id="chapX" et le lien de nav.      -->
+<!-- ============================================================ -->
+<section id="crypto" class="py-24 relative border-t border-cyan-500/10">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">CHAPITRE 3 / 2024-2025</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Les mécanismes de sécurité — <span class="text-cyan-400 glow-cyan">La cryptographie</span></h2>
+      <p class="text-gray-400 mt-4 max-w-3xl">Sommaire : Introduction · Cryptologie · Cryptographie symétrique · Cryptographie asymétrique · Le hachage · Les signatures numériques · Les certificats numériques.</p>
+    </div>
+
+    <!-- 1. Introduction -->
+    <details id="crypto-intro" class="acc scroll-mt-24" open>
+      <summary><span><i class="fa-solid fa-key text-cyan-400 mr-2"></i>1. Introduction & définitions</span></summary>
+      <div class="acc-body space-y-4">
+        <p><span class="text-white">Cryptologie</span> : ancien art du secret ou nouvelle science des messages secrets ; comprend la <span class="text-cyan-400">cryptographie</span> et la <span class="text-cyan-400">cryptanalyse</span>.</p>
+        <p><span class="text-white">Cryptographie</span> (grec ancien : <em>Kryptos</em> « caché » + <em>graphie</em> « écriture ») : principes, méthodes et techniques dont l'application assure le chiffrement et le déchiffrement des données, afin d'en préserver la confidentialité, l'authenticité et l'intégrité.</p>
+        <p><span class="text-white">Cryptanalyse</span> : méthodes et procédés de décryptage visant à rétablir en clair un cryptogramme, sans connaissance préalable de la clé de chiffrement.</p>
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 font-mono text-xs mb-1">CRYPTER</p>
+            <p class="text-sm">Rendre illisible un texte en clair sans connaître la clé après. Exemple : puzzle.</p>
+          </div>
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 font-mono text-xs mb-1">DÉCRYPTER</p>
+            <p class="text-sm">Retrouver le texte en clair d'origine sans posséder la clé.</p>
+          </div>
+          <div class="p-4 border border-green-500/15 rounded-lg">
+            <p class="text-green-400 font-mono text-xs mb-1">CHIFFRER</p>
+            <p class="text-sm">Opération qui transforme un texte en clair en un texte chiffré ou cryptogramme, inexploitable sans la clé.</p>
+          </div>
+          <div class="p-4 border border-green-500/15 rounded-lg">
+            <p class="text-green-400 font-mono text-xs mb-1">DÉCHIFFRER</p>
+            <p class="text-sm">Opération inverse du chiffrement, permettant à partir de la clé de rétablir en clair un cryptogramme.</p>
+          </div>
+        </div>
+        <p class="mt-4"><span class="text-white">Clé</span> : paramètre utilisé en entrée avec les données lors de l'opération de chiffrement/cryptage.</p>
+        <div class="mt-4">
+          <p class="text-white font-medium mb-2">Quelques services de sécurité</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="section-tag">Confidentialité</span>
+            <span class="section-tag">Authentification</span>
+            <span class="section-tag">Intégrité</span>
+            <span class="section-tag">Disponibilité</span>
+            <span class="section-tag">Non répudiation</span>
+            <span class="section-tag">Fraîcheur</span>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 2. Cryptographie symétrique -->
+    <details id="crypto-sym" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-lock text-cyan-400 mr-2"></i>2. Cryptographie symétrique (clé secrète)</span></summary>
+      <div class="acc-body space-y-4">
+        <p>Les données sont chiffrées et déchiffrées avec la <span class="text-cyan-400">même clé</span>, connue seulement de l'émetteur et du récepteur.</p>
+        <div class="code-block"><span class="cmt">// Fonctions d'un algorithme cryptographique</span>
+E (Encryption) : C = E(K, M)   <span class="cmt">// C = cryptogramme, M chiffré avec la clé K</span>
+D (Decryption) : M = D(K, C)   <span class="cmt">// M = résultat du déchiffrement de C</span></div>
+
+        <h4 class="text-white font-medium mt-6 mb-2">Chiffrement traditionnel</h4>
+        <p class="text-sm">Opérations de décalage, substitution, transposition…</p>
+
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Chiffre de César — substitution monoalphabétique</p>
+          <p class="text-sm">E(K,X) = (X + K) mod 26. Exemple avec K=3 : message M = ZIG → C L J.</p>
+          <p class="text-sm text-gray-400 mt-1">Faiblesse : seulement 25 clés possibles à essayer (attaque exhaustive), et analyse fréquentielle des lettres (méthode d'Al-Kindi, IXe siècle).</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Substitution monoalphabétique générale</p>
+          <p class="text-sm">Chaque lettre est remplacée par une autre selon une table fixe. 26!-1 clés possibles (≈ 4×10²⁶), mais reste vulnérable à l'analyse fréquentielle.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Vigenère — substitution polyalphabétique</p>
+          <p class="text-sm">Utilise un mot comme clé, répété autant de fois que nécessaire. Exemple : texte ZIGUINCHOR avec clé CASA → chiffré CJZVLOVIRS. Si l'algorithme est connu, il y a 26⁴ clés possibles.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Transposition</p>
+          <p class="text-sm">On permute les lettres selon une permutation fixe de la clé (ex. clé 123456 → 642531). Pour une clé de longueur N : N!-1 clés possibles.</p>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg mt-3">
+          <p class="text-yellow-400 text-sm font-mono mb-1">Principe de Kerckhoffs</p>
+          <p class="text-sm">On suppose que l'attaquant connaît le système de chiffrement, sauf la clé. La sécurité doit toujours reposer sur la clé, pas sur le secret de l'algorithme.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Chiffrement par OU exclusif (XOR)</p>
+          <div class="code-block">texte clair : 100111
+clé         : 110011
+--------------------- XOR
+chiffré     : 010100
+--------------------- XOR (avec la même clé)
+texte clair : 100111</div>
+        </div>
+
+        <h4 class="text-white font-medium mt-6 mb-2">Chiffrement moderne</h4>
+        <p class="text-sm">Chiffrement de <span class="text-white">Vernam</span> (1917) : opérateur XOR avec une clé pseudo-aléatoire. Si la génération de clé est prévisible, la clé peut être devinée même si le canal est sûr.</p>
+        <div class="grid md:grid-cols-2 gap-4 mt-3">
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 font-mono text-xs mb-1">CHIFFREMENT PAR FLUX</p>
+            <p class="text-sm">Chiffrement à la volée, bit par bit (ex. simple XOR). Adapté au temps réel. Algorithmes : RC4 (SSL, Wifi 802.11), A5/1-2-3 (GSM), E0 (Bluetooth).</p>
+          </div>
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 font-mono text-xs mb-1">CHIFFREMENT PAR BLOC</p>
+            <p class="text-sm">Le texte est divisé en blocs de taille fixe, chacun chiffré par substitution/permutation/XOR. Algorithmes : DES, Triple DES, IDEA, RC5, AES, Blowfish.</p>
+          </div>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Modes opératoires</p>
+          <p class="text-sm"><span class="text-white">ECB</span> (Electronic Code Book) : chaque bloc est chiffré indépendamment avec la même clé.<br>
+          <span class="text-white">CBC</span> (Cipher Block Chaining) : chaque bloc est XORé avec le chiffré du bloc précédent avant d'être chiffré ; un Vecteur d'Initialisation (IV) rend chaque message unique.<br>
+          Autres modes : CFB, OFB, CTR, CTS, PCBC, XEX…</p>
+        </div>
+        <div class="p-4 border border-red-500/15 rounded-lg mt-3 bg-red-500/5">
+          <p class="text-red-400 text-sm font-mono mb-1">Problématique principale</p>
+          <p class="text-sm">Comment se partager la clé ? Sans tiers, le nombre de clés à gérer explose : N personnes → N(N-1)/2 clés (ex. 100 personnes = 4950 clés). Alternative : cryptographie à clé publique ou échange Diffie-Hellman.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- 3. Cryptographie asymétrique -->
+    <details id="crypto-asym" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-key text-cyan-400 mr-2"></i>3. Cryptographie asymétrique (clé publique)</span></summary>
+      <div class="acc-body space-y-4">
+        <p>Deux clés différentes et liées mathématiquement : une <span class="text-cyan-400">clé publique</span> (connue de tous) et une <span class="text-cyan-400">clé privée</span> (confidentielle). Il est facile de dériver la clé publique de la clé privée ; l'inverse doit être difficilement calculable.</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Chiffrer avec la clé publique (confidentialité)</p>
+            <p class="text-sm">B chiffre avec PubA, seul A (qui a PrivA) peut déchiffrer. A ne peut pas vérifier qui est l'émetteur : n'importe qui dispose de PubA.</p>
+          </div>
+          <div class="p-4 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Chiffrer avec la clé privée (authentification)</p>
+            <p class="text-sm">A chiffre avec PrivA, B déchiffre avec PubA. B peut vérifier que seul A a pu chiffrer ce message (le message n'est pas secret, car PubA est connue de tous).</p>
+          </div>
+        </div>
+        <h4 class="text-white font-medium mt-6 mb-2">Sécurité des algorithmes asymétriques</h4>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Problème de la factorisation des entiers (RSA, 1977)</p>
+          <p class="text-sm">Étant N = p×q (p, q premiers) : facile de calculer N, difficile de retrouver p et q si N est grand. Exemple RSA-640 (193 chiffres décimaux) : effort de 6 mois de calcul équivalent à 30 ans sur un CPU Opteron 2.2GHz (F. Bahr et al., 2006).</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Problème du logarithme discret</p>
+          <p class="text-sm">Étant y = gˣ : facile de calculer y, difficile de retrouver x. Base de Diffie-Hellman (1976) et El-Gamal (1984). Signature : DSA (NIST, 1991).</p>
+          <div class="code-block mt-2">A : a, g, p → A = gᵃ mod p
+B : b, g, p → B = gᵇ mod p
+Échange : A envoie (g,p,A) à B ; B répond avec B
+Clé commune : K = Aᵇ mod p = Bᵃ mod p = gᵃᵇ mod p</div>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg mt-3">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Logarithme discret elliptique (ECDH / ECDSA)</p>
+          <p class="text-sm">Étant Q = dP (point P d'une courbe elliptique, scalaire d) : facile de calculer Q, difficile de retrouver d. Signature : ECDSA (Scott Vanstone, NIST 1992).</p>
+          <div class="code-block mt-2">A : kA aléatoire → QA = kA·P
+B : kB aléatoire → QB = kB·P
+Clé commune = kA·kB·P</div>
+        </div>
+      </div>
+    </details>
+
+    <!-- 4. Hachage -->
+    <details id="crypto-hash" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-fingerprint text-cyan-400 mr-2"></i>4. Les fonctions de hachage</span></summary>
+      <div class="acc-body space-y-4">
+        <p>Une fonction de hachage est un algorithme difficilement réversible qui produit, à partir de données, une empreinte unique (hash/condensé). À partir de l'empreinte, il est difficile de retrouver les données. Utile car les opérations sur de grandes données sont coûteuses en cryptographie asymétrique.</p>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Propriétés de base</p>
+          <ul class="text-sm space-y-1 list-disc list-inside">
+            <li>Non réversible (sécurité)</li>
+            <li>Taille de sortie fixe, quelle que soit la taille d'entrée</li>
+            <li>Résistance aux collisions : des données différentes ne produisent pas la même empreinte</li>
+          </ul>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Algorithmes</p>
+          <p class="text-sm">Construction de Merkle-Damgard : MD5 (128 bits, 1991), SHA1 (160 bits, 1995, plus résistant que MD5), SHA2 (256-512 bits, 2001). Construction de Keccak : SHA3.</p>
+        </div>
+        <div class="p-4 border border-green-500/15 rounded-lg">
+          <p class="text-green-400 text-sm font-mono mb-1">Application : stockage des mots de passe</p>
+          <p class="text-sm">Les mots de passe doivent toujours être stockés sous forme d'empreintes (hachés), jamais en clair. À la connexion, le mot de passe saisi est haché puis comparé à l'empreinte stockée : <span class="font-mono text-cyan-400">Login + H(PWD)</span>.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- 5. Signatures numériques -->
+    <details id="crypto-sig" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-signature text-cyan-400 mr-2"></i>5. Les signatures numériques</span></summary>
+      <div class="acc-body space-y-4">
+        <p>Équivalent électronique de la signature manuelle. Le message est envoyé <span class="text-white">en clair</span> ; seule l'empreinte signée accompagne le message (l'objectif n'est pas de chiffrer).</p>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Trois services de sécurité</p>
+          <ul class="text-sm space-y-1 list-disc list-inside">
+            <li><span class="text-white">Authentification</span> : le récepteur vérifie que le message vient bien de l'émetteur supposé</li>
+            <li><span class="text-white">Non répudiation</span> : l'émetteur ne peut pas nier avoir émis le message</li>
+            <li><span class="text-white">Intégrité</span> : le message n'a pas été modifié durant la transmission</li>
+          </ul>
+        </div>
+        <div class="code-block">h = H(m)              <span class="cmt">// empreinte du message</span>
+signature = E(PrivB, h) <span class="cmt">// B signe l'empreinte avec sa clé privée</span>
+Envoi : (m, signature)
+
+Côté A (réception) :
+h' = D(PubB, signature)
+Vérifie si H(m) = h'  <span class="cmt">// authenticité + intégrité</span></div>
+        <p class="text-sm text-gray-400">Usages : distribution de logiciels, transactions financières, emails.</p>
+      </div>
+    </details>
+
+    <!-- 6. Protocoles cryptographiques -->
+    <details id="crypto-proto" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-diagram-project text-cyan-400 mr-2"></i>6. Protocoles cryptographiques</span></summary>
+      <div class="acc-body space-y-4">
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Chiffrement hybride (confidentialité + authentification + intégrité)</p>
+          <div class="code-block">h = H(m)
+s = E(PrivA, h)
+c = E(PubB, (m ┃ s))     <span class="cmt">// A envoie c à B</span>
+
+Chez B : D(PrivB, c) = (m ┃ s)
+Vérifie si D(PubA, s) = H(m)</div>
+          <p class="text-sm mt-2">Variantes : chiffrer puis signer / chiffrer et signer / signer puis chiffrer.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Authentification mutuelle — Needham-Schroeder</p>
+          <div class="code-block">A → B : PubB? / B → A : PubB
+B → A : PubA? / A → B : PubA
+A → B : {Na, A}PubB
+B → A : {Na, Nb}PubA
+A → B : {Nb}PubB</div>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">HMAC — authenticité et intégrité (clé partagée)</p>
+          <div class="code-block">Kab = Na ⊕ Nb        <span class="cmt">// clé symétrique établie via échange de nonces chiffrés</span>
+h = H(Kab ┃ H(Kab ┃ m))
+c = E(Kab, (m ┃ h))
+Vérification : h = H(Kab ┃ H(Kab ┃ m))</div>
+        </div>
+        <div class="p-4 border border-red-500/15 rounded-lg bg-red-500/5">
+          <p class="text-red-400 text-sm font-mono mb-1">Attaque Man In The Middle (MITM)</p>
+          <p class="text-sm">Un attaquant M s'interpose et substitue sa propre clé publique (PubM) à celle de B. A chiffre alors avec PubM sans le savoir. Cette attaque n'est possible que si A et B sont à plus d'un saut l'un de l'autre. Contre-mesures : authentifier la clé publique via Short Authenticated Strings (SAS), certificat numérique, Web of Trust.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- 7. Authenticité de la clé publique / Certificats -->
+    <details id="crypto-cert" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-certificate text-cyan-400 mr-2"></i>7. Authenticité de la clé publique & certificats numériques</span></summary>
+      <div class="acc-body space-y-4">
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">SAS (Short Authenticated Strings)</p>
+          <p class="text-sm">Utilise un canal privé, limité, lent et inaccessible à l'intrus (ex. téléphone) pour comparer SAS = H(PubB) et vérifier que la clé publique reçue sur le canal principal n'a pas été altérée.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Certificat numérique</p>
+          <p class="text-sm">Composé d'identités issues d'une tierce partie de confiance (autorité de certification). Il vérifie une entité et sa clé publique. Contient : nom du propriétaire, clé publique + date d'expiration, nom du producteur, signature numérique du producteur.</p>
+          <p class="text-sm mt-2 text-gray-400">Analogie : un passeport n'a de valeur que si l'on fait confiance à l'organisme émetteur ; de même pour un notaire lors d'une signature de contrat.</p>
+        </div>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Certificat SSL / TLS (https)</p>
+          <ol class="text-sm space-y-1 list-decimal list-inside">
+            <li>Le navigateur demande une page sécurisée</li>
+            <li>Le serveur envoie son certificat + PubSVR</li>
+            <li>Le navigateur vérifie le certificat (via la clé publique de la CA déjà installée)</li>
+            <li>Le navigateur crée une clé symétrique et la chiffre avec PubSVR</li>
+            <li>Les communications suivantes sont chiffrées/déchiffrées avec cette clé symétrique</li>
+          </ol>
+          <p class="text-sm mt-2 text-gray-400">Le cadenas indique que la communication est chiffrée — pas que le site est sûr : un hacker peut aussi obtenir un certificat SSL valide pour son propre site.</p>
+        </div>
+        <div class="p-4 border border-yellow-500/15 rounded-lg">
+          <p class="text-yellow-400 text-sm font-mono mb-1">Certificat auto-signé vs commercialisé</p>
+          <p class="text-sm"><span class="text-white">Auto-signé</span> : signé par la même entité (« crois-moi, je suis celui que je prétends être »), non reconnu par défaut des navigateurs, mais aussi sécurisé techniquement — adapté à un usage restreint.<br>
+          <span class="text-white">Commercialisé</span> : signé par une CA reconnue (Symantec, DigiCert…), connu des navigateurs.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- 8. Sécurité des mots de passe -->
+    <details id="crypto-pwd" class="acc scroll-mt-24">
+      <summary><span><i class="fa-solid fa-shield-halved text-cyan-400 mr-2"></i>8. Sécurité des mots de passe</span></summary>
+      <div class="acc-body space-y-4">
+        <p>Résistance aux attaques par force brute — mesures : robustesse du mot de passe, unicité par compte, changement périodique, etc.</p>
+        <div class="p-4 border border-cyan-500/15 rounded-lg">
+          <p class="text-cyan-400 text-sm font-mono mb-1">Facteurs de robustesse</p>
+          <ul class="text-sm space-y-1 list-disc list-inside">
+            <li><span class="text-white">Longueur</span> : 26⁶ ≈ 308 915 776 combinaisons pour 6 lettres, contre 26⁴ ≈ 456 976 pour 4 lettres</li>
+            <li><span class="text-white">Composition mixte</span> (minuscules, majuscules, chiffres, caractères spéciaux) : 36⁶ ≈ 2 176 782 336 combinaisons pour 6 caractères alphanumériques, contre 26⁶ pour 6 lettres seules</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- TRAVAUX DIRIGÉS (TD)                                          -->
+<!-- Pour ajouter un futur TD5 : dupliquer un bloc <div id="tdX">   -->
+<!-- ci-dessous ET ajouter une carte dans la grille TD_INDEX.       -->
+<!-- Design distinct : accent ambre/orange pour différencier des TP -->
+<!-- ============================================================ -->
+<section id="td" class="py-24 relative border-t border-cyan-500/10">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag" style="color:var(--warning);border-color:rgba(255,184,0,0.25);background:rgba(255,184,0,0.06)">TRAVAUX DIRIGÉS / Pr Y. FAYE — 2025-2026</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Exercices <span style="color:var(--warning)">& Protocoles</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Énoncés des travaux dirigés — consultation libre, sans correction ajoutée.</p>
+    </div>
+
+    <!-- TD_INDEX -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+      <a href="#td1" class="index-card" style="border-color:rgba(255,184,0,0.18)">
+        <div class="font-mono text-xs mb-2" style="color:var(--warning)">TD 1</div>
+        <div class="font-bold mb-1">Cryptographie — chiffrement traditionnel</div>
+        <div class="text-xs text-gray-500">César · Substitution · Transposition · Vigenère</div>
+      </a>
+      <a href="#td2" class="index-card" style="border-color:rgba(255,184,0,0.18)">
+        <div class="font-mono text-xs mb-2" style="color:var(--warning)">TD 2</div>
+        <div class="font-bold mb-1">Cryptographie — chiffrement moderne</div>
+        <div class="text-xs text-gray-500">Mode ECB · Mode CBC · Effet d'avalanche</div>
+      </a>
+      <a href="#td3" class="index-card" style="border-color:rgba(255,184,0,0.18)">
+        <div class="font-mono text-xs mb-2" style="color:var(--warning)">TD 3</div>
+        <div class="font-bold mb-1">Protocoles cryptographiques</div>
+        <div class="text-xs text-gray-500">Needham-Schroeder · Fraîcheur · Authentification</div>
+      </a>
+      <a href="#td4" class="index-card" style="border-color:rgba(255,184,0,0.18)">
+        <div class="font-mono text-xs mb-2" style="color:var(--warning)">TD 4</div>
+        <div class="font-bold mb-1">Protocoles de sécurité</div>
+        <div class="text-xs text-gray-500">Diffie-Hellman · XOR · Étude de cas (tontine)</div>
+      </a>
+      <!-- Ajouter ici une nouvelle carte <a href="#td5" class="index-card"> ... </a> -->
+    </div>
+    <!-- /TD_INDEX -->
+
+    <!-- ========== TD1 ========== -->
+    <div id="td1" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag" style="color:var(--warning);border-color:rgba(255,184,0,0.25);background:rgba(255,184,0,0.06)">TD 1</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Cryptographie <span style="color:var(--warning)">— chiffrement traditionnel</span></h3>
+      <p class="text-gray-400 mb-6">Table de correspondance alphabet/entiers (A=0 … Z=25). Message étudié : <span class="font-mono text-cyan-400">M = WELCOMETOUASZ</span>.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-shuffle mr-2" style="color:var(--warning)"></i>Exercice 1 — Chiffre de César (clé K=5)</span></summary>
+        <div class="acc-body space-y-3">
+          <div class="qa-item">1. Trouver le chiffrement C de M en utilisant la méthode de César avec une clé K = 5.</div>
+          <div class="qa-item">2. Pour une lettre X du message M, donner une formule mathématique F permettant de trouver l'entier correspondant à la lettre qui doit la remplacer dans le cryptogramme C.</div>
+          <div class="qa-item">3. Si on connaît la clé K, quel est le nombre de fois qu'on doit appliquer la formule F pour chiffrer M ?</div>
+          <div class="qa-item">4. Si la clé K n'est pas connue, quel est le nombre maximum N et le nombre minimum n de fois qu'on doit appliquer F pour trouver C ?</div>
+          <div class="qa-item">5. N et n sont-ils fonction de la longueur de M ?</div>
+          <div class="qa-item">6. À l'aide d'une formule mathématique ou d'un algorithme, trouver la formule de déchiffrement de C.</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-table-cells mr-2" style="color:var(--warning)"></i>Exercice 2 — Substitution, transposition & Vigenère</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="p-4 border rounded-lg" style="border-color:rgba(255,184,0,0.15)">
+            <p class="text-sm font-mono mb-1" style="color:var(--warning)">Clé de substitution K (tirage sans remise des 26 lettres)</p>
+            <div class="code-block">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+K= P O I U Y T R E Z A Q S D F G H J K L M W X C V B N</div>
+          </div>
+          <div class="qa-item">1. Trouver C, le chiffrement de M : C = E(K, M).</div>
+          <div class="qa-item">2. Si la clé K n'est pas connue, quel est le nombre maximum N et le nombre minimum n de clés à utiliser pour trouver C ?</div>
+          <div class="qa-item">3. Quelle sera la longueur de la clé pour chiffrer des chiffres et des lettres ? Quel sera alors le nombre maximum de clés à utiliser pour trouver un cryptogramme ?</div>
+          <div class="qa-item">4. Trouver la clé inverse K⁻¹ de déchiffrement de C. <span class="text-gray-500">(indice : B prend la position de Y, donc dans la clé inverse Y sera à la position de B)</span></div>
+          <div class="qa-item">5. Chiffrer le message M par transposition en utilisant la clé K = [1-6-4-2-3-5] : C = E(K, M).</div>
+          <div class="qa-item">6. Déterminer la clé K⁻¹ associée à la clé de transposition K, puis retrouver M à partir de C.</div>
+          <div class="qa-item">7. Si on ne connaît que la longueur (taille) de la clé, quel sera le nombre maximum de clés à utiliser pour trouver un cryptogramme de même taille que la clé ?</div>
+          <div class="qa-item">8. En utilisant le chiffrement de Vigenère, chiffrer M avec la clé K = MASTER.</div>
+          <div class="qa-item">9. Trouver la clé K⁻¹ associée à la clé de Vigenère MASTER.</div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ========== TD2 ========== -->
+    <div id="td2" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag" style="color:var(--warning);border-color:rgba(255,184,0,0.25);background:rgba(255,184,0,0.06)">TD 2</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Cryptographie <span style="color:var(--warning)">— chiffrement moderne</span></h3>
+      <p class="text-gray-400 mb-6">Texte clair étudié : <span class="font-mono text-cyan-400">M = 11001010111011</span>. Blocs de 4 bits.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-table-cells-large mr-2" style="color:var(--warning)"></i>Exercice 1 — Mode ECB (décalage circulaire à droite)</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm text-gray-400">Fonction de décalage à droite d'un bit E = xᵢ≫y (décalage circulaire), appliquée sur un bloc de 4 bits : E(b0b1b2b3) → b0≫2 b1≫2 b2≫2 b3≫2.</p>
+          <div class="qa-item">1. Décrire mathématiquement, en pseudo-code ou par schéma : (a) le chiffrement d'un bit, (b) le chiffrement d'un bloc, (c) le fonctionnement du mode ECB.</div>
+          <div class="qa-item">2. Décomposer M en blocs de 4 bits (de gauche à droite) ; compléter par bourrage de zéros si nécessaire.</div>
+          <div class="qa-item">3. Appliquer le mode ECB sur M et donner le texte chiffré C.</div>
+          <div class="qa-item">4. Appliquer le déchiffrement et vérifier avec le message original.</div>
+          <div class="qa-item">5. Un texte clair formé des mêmes blocs (ex. 1110) voit-il cette redondance se propager dans le texte chiffré ?</div>
+          <div class="qa-item">6. Si l'ordre des blocs du texte chiffré est modifié, le déchiffrement de chaque bloc reste-t-il possible ?</div>
+          <div class="qa-item">7. Si M est le salaire de A et M' = 11000010111100 le salaire de B, A reçoit C = E(M) et C' = E(M') : peut-il connaître l'ordre de grandeur du salaire de B ?</div>
+          <div class="qa-item">8. Si M' = 1010111011001, A reçoit C et C' : peut-il connaître le salaire de B sachant que les deux messages sont constitués des mêmes blocs dans un ordre différent ?</div>
+          <div class="qa-item">9. En remplaçant les blocs par des lettres de fréquences différentes selon la langue, l'analyse fréquentielle des blocs chiffrés permet-elle de retrouver le texte clair ?</div>
+          <div class="qa-item">10. Effet d'avalanche : en moyenne 50% du texte en clair récupéré est faux si un bit change durant la transmission. Si un « 1 » se transforme en « 0 », quel pourcentage du texte en clair sera correct au déchiffrement ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-link mr-2" style="color:var(--warning)"></i>Exercice 2 — Mode CBC (permutation de bits, IV=1001)</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm text-gray-400">Fonction de permutation E sur un bloc de 4 bits : E(b1b2b3b4) → b3b2b4b1. Vecteur d'initialisation IV = 1001.</p>
+          <div class="qa-item">1. Décrire mathématiquement, en pseudo-code ou par schéma, le fonctionnement du mode CBC.</div>
+          <div class="qa-item">2. Décomposer M en blocs de 4 bits (bourrage de zéros si nécessaire).</div>
+          <div class="qa-item">3. Appliquer le mode CBC sur M et donner le texte chiffré C.</div>
+          <div class="qa-item">4. Appliquer le déchiffrement et vérifier avec le message original.</div>
+          <div class="qa-item">5. La redondance des blocs identiques du texte clair se propage-t-elle dans le texte chiffré ?</div>
+          <div class="qa-item">6. Si l'ordre des blocs chiffrés est modifié, le déchiffrement de chaque bloc reste-t-il possible ?</div>
+          <div class="qa-item">7-8. Mêmes questions que pour ECB sur les salaires M et M' (ordre de grandeur, blocs réordonnés).</div>
+          <div class="qa-item">9. L'analyse fréquentielle des blocs chiffrés permet-elle de retrouver le texte clair ?</div>
+          <div class="qa-item">10. Effet d'avalanche : quel pourcentage du texte en clair sera correct si un bit passe de 1 à 0 pendant la transmission ?</div>
+          <div class="qa-item">11. Estimer l'effet d'avalanche si c'est le bit b2 qui a subi la transformation.</div>
+          <div class="qa-item">12. Remplacer le mode opératoire par permutation par un mode opératoire OU-Exclusif (XOR) et estimer à nouveau l'effet d'avalanche.</div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ========== TD3 ========== -->
+    <div id="td3" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag" style="color:var(--warning);border-color:rgba(255,184,0,0.25);background:rgba(255,184,0,0.06)">TD 3</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Protocoles <span style="color:var(--warning)">cryptographiques</span></h3>
+      <p class="text-gray-400 mb-6">Analyse de propriétés de sécurité : secret, authentification mutuelle, fraîcheur des données échangées.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-diagram-project mr-2" style="color:var(--warning)"></i>Exercice 1 — Protocole de Needham-Schroeder</span></summary>
+        <div class="acc-body space-y-3">
+          <div class="code-block">A → B : {Na.A}Kb
+B → A : {Na.Nb}Ka
+A → B : {Nb}Kb</div>
+          <div class="qa-item">Analyser le protocole et trouver les propriétés (services / objectifs de sécurité) qu'il comporte.</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-list-ol mr-2" style="color:var(--warning)"></i>Exercice 2 — Six protocoles à analyser</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm text-gray-400">Pour chacun des protocoles suivants, dire : si la donnée <span class="font-mono text-cyan-400">s</span> est secrète, si A et B s'authentifient mutuellement (ou authentifient mutuellement leur message), et si les données échangées sont fraîches.</p>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)"><span class="font-mono text-xs" style="color:var(--warning)">Protocole 1</span> — <span class="font-mono">A → B : A, s</span></div>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)"><span class="font-mono text-xs" style="color:var(--warning)">Protocole 2</span> — <span class="font-mono">A → B : {A, s}Kb</span>, avec Kb publique et Kb⁻¹ privée</div>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)"><span class="font-mono text-xs" style="color:var(--warning)">Protocole 3</span> — <span class="font-mono">A → B : A, {s}Ka⁻¹</span></div>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)"><span class="font-mono text-xs" style="color:var(--warning)">Protocole 4</span> — <span class="font-mono">A → B : {A, {s}Ka⁻¹}Kb</span></div>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)">
+            <span class="font-mono text-xs" style="color:var(--warning)">Protocole 5</span>
+            <div class="code-block mt-2">A génère un nonce frais Na
+A → B : {A, B, Na}Kb
+B → A : {A, B, Na, s}Ka</div>
+          </div>
+          <div class="p-3 border rounded-lg" style="border-color:rgba(255,184,0,0.15)">
+            <span class="font-mono text-xs" style="color:var(--warning)">Protocole 6</span> — Kab clé symétrique partagée entre A et B
+            <div class="code-block mt-2">A → B : {A, B, Na}Kab
+B → A : {A, B, Na, s}Kab</div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ========== TD4 ========== -->
+    <div id="td4" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag" style="color:var(--warning);border-color:rgba(255,184,0,0.25);background:rgba(255,184,0,0.06)">TD 4</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Protocoles <span style="color:var(--warning)">de sécurité</span></h3>
+      <p class="text-gray-400 mb-6">Échange de clé (Diffie-Hellman), échange de message par XOR, et étude de cas d'une tontine chiffrée.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-key mr-2" style="color:var(--warning)"></i>Exercice 1 — Échange de clé Diffie-Hellman</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm text-gray-400">A choisit un secret <span class="font-mono">a</span> et calcule A = gᵃ mod p ; B choisit <span class="font-mono">b</span> et calcule B = gᵇ mod p. Échange : A envoie (g,p,A) à B ; B répond avec B.</p>
+          <div class="code-block">A : a, g, p → A = gᵃ mod p        B : b, g, p → B = gᵇ mod p
+A → B : g, p, A                  B → A : B
+k = Bᵃ mod p (côté A)             k = Aᵇ mod p (côté B)</div>
+          <div class="qa-item">1. Trouver la clé symétrique partagée après l'échange.</div>
+          <div class="qa-item">2. Quelles sont les valeurs secrètes (confidentielles) contenues dans cet échange ?</div>
+          <div class="qa-item">3. Si g = 5 et p = 13, calculer la clé partagée pour a = 3 et b = 5.</div>
+          <div class="qa-item">4. Attaque sur la confidentialité (force brute) : étant donné g, p et A, il est difficile de retrouver a (problème du logarithme discret). Pour un hacker H, quel est le nombre de multiplications à calculer pour obtenir la clé par force brute si a et b sont choisis dans l'intervalle [1, 5] ?</div>
+          <div class="qa-item">5. Attaque sur l'authentification : si g et p sont grands et bien choisis, il sera très difficile pour H de trouver la clé — il peut alors tenter de compromettre l'authentification. Proposer un modèle d'attaque de H pour se faire passer pour A auprès de B.</div>
+          <div class="qa-item">6. Proposer un modèle d'attaque de H pour se faire passer pour A auprès de B <span class="italic">et</span> pour B auprès de A (attaque de l'homme du milieu).</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-right-left mr-2" style="color:var(--warning)"></i>Exercice 2 — Échange de message par OU-Exclusif</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm text-gray-400">A veut envoyer un message M ∈ {0,1}ⁿ à B. A possède une clé secrète <span class="font-mono">a</span> et B une clé secrète <span class="font-mono">b</span>, de même longueur que M.</p>
+          <div class="code-block">1. A envoie A1 = M ⊕ a  à B
+2. B envoie B1 = A1 ⊕ b à A
+3. A envoie A2 = B1 ⊕ a à B</div>
+          <div class="qa-item">1. Montrer que B peut retrouver le message M à partir de A2.</div>
+          <div class="qa-item">2. Montrer que si un attaquant C a intercepté tous les échanges (A1, B1, A2), il peut également retrouver M.</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-people-group mr-2" style="color:var(--warning)"></i>Exercice 3 — Étude de cas : la tontine chiffrée (A, B, C, D)</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm text-gray-400">Quatre personnes A, B, C et D participent à une tontine ; A est le coordonnateur et collecte les cotisations de B, C, D via un système de transfert d'argent par code. À la réception, A tire au sort le gagnant et lui envoie le code de retrait. Les codes échangés sont confidentiels et la provenance des messages doit être vérifiée. Chacun génère une paire de clés (publique/privée : KpuX / KprX) et distribue l'une des deux ; une clé symétrique KsX est générée au besoin.</p>
+          <div class="qa-item">1. Quelle clé est distribuée aux autres participants (publique ou privée) ? Justifier.</div>
+          <div class="qa-item">2. À la fin du mois, A diffuse un message pour demander les cotisations. Proposer une méthode permettant aux autres de vérifier que la diffusion provient bien de A.</div>
+          <div class="qa-item">3. B souhaite envoyer le code confidentiel de son montant déjà transféré à A : quelle clé doit-il utiliser pour chiffrer ce code ?</div>
+          <div class="qa-item">4. Après réception de l'ensemble des transferts, A doit transmettre le code de retrait au gagnant C et attendre un accusé de réception ; il le chiffre avec sa propre clé symétrique KsA puis l'envoie à C. Ce protocole est-il correct ? Proposer une ou plusieurs solutions alternatives.</div>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+<!-- FIN TRAVAUX DIRIGÉS — pour ajouter un TD5, dupliquer un bloc <div id="tdX"> et ajouter sa carte dans TD_INDEX plus haut -->
+
+<!-- ============================================================ -->
+<!-- TRAVAUX PRATIQUES & DIRIGÉS                                    -->
+<!-- Pour ajouter un futur TP5 : dupliquer un bloc <section id="tpX"> -->
+<!-- ci-dessous ET ajouter une carte dans la grille d'index.          -->
+<!-- ============================================================ -->
+<section id="tp" class="py-24 relative border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-16">
+      <span class="section-tag">PRATIQUE / Dr Malaw NDIAYE — 2025</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Travaux <span class="text-cyan-400 glow-cyan">Pratiques</span></h2>
+      <p class="text-gray-400 mt-4 max-w-2xl">Consultation libre des énoncés — contenu organisé pour la lecture, sans correction ajoutée.</p>
+    </div>
+
+    <!-- TP_INDEX -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+      <a href="#tp1" class="index-card">
+        <div class="font-mono text-xs text-cyan-400 mb-2">TP 1</div>
+        <div class="font-bold mb-1">Chiffrement avec OpenSSL</div>
+        <div class="text-xs text-gray-500">Symétrique · Asymétrique · Hachage · Signatures</div>
+      </a>
+      <a href="#tp2" class="index-card">
+        <div class="font-mono text-xs text-cyan-400 mb-2">TP 2</div>
+        <div class="font-bold mb-1">Analyse TLS avec Wireshark</div>
+        <div class="text-xs text-gray-500">Handshake · Certificats · Décryptage</div>
+      </a>
+      <a href="#tp3" class="index-card">
+        <div class="font-mono text-xs text-cyan-400 mb-2">TP 3</div>
+        <div class="font-bold mb-1">Hachage & attaques MD5</div>
+        <div class="text-xs text-gray-500">Dictionnaire · Force brute</div>
+      </a>
+      <a href="#tp4" class="index-card">
+        <div class="font-mono text-xs text-cyan-400 mb-2">TP 4</div>
+        <div class="font-bold mb-1">Proxy Squid + SquidGuard</div>
+        <div class="text-xs text-gray-500">ACL · Filtrage · Authentification</div>
+      </a>
+      <!-- Ajouter ici une nouvelle carte <a href="#tp5" class="index-card"> ... </a> -->
+    </div>
+    <!-- /TP_INDEX -->
+
+    <!-- ========== TP1 ========== -->
+    <div id="tp1" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag">TP 1</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Chiffrement symétrique / asymétrique / hachage <span class="text-cyan-400">avec OpenSSL</span></h3>
+      <p class="text-gray-400 mb-6">But : utiliser OpenSSL pour chiffrer/déchiffrer et générer des signatures.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-terminal text-cyan-400 mr-2"></i>Présentation d'OpenSSL</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm">Boîte à outils cryptographiques (SSL/TLS) offrant une bibliothèque C et une commande en ligne <span class="font-mono text-cyan-400">openssl</span> pour : chiffrement/déchiffrement (DES, IDEA, RC2, RC4, Blowfish…), création de clés RSA, calcul d'empreintes (MD5, SHA, RIPEMD160…), création de certificats X509, signature/chiffrement S/MIME, tests clients/serveurs SSL/TLS.</p>
+          <div class="code-block">$ man openssl
+$ openssl &lt;commande&gt; &lt;options&gt;
+$ openssl enc -h        <span class="cmt"># aide chiffrement</span>
+$ openssl dgst -h       <span class="cmt"># aide hachage</span></div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-lock text-cyan-400 mr-2"></i>Partie 1 — Chiffrement symétrique</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm font-medium text-white">Lab 1 : chiffrement implicite avec mot de passe</p>
+          <div class="code-block"><span class="cmt"># Syntaxe générale</span>
+$ openssl enc -e -AlgoCrypto -in FichierClaire -out FichierChiffré
+$ openssl enc -d -AlgoCrypto -in FichierChiffré -out FichierClaire
+
+<span class="cmt"># Q1 : créer et chiffrer toto.cl en AES-256-CBC</span>
+$ echo "Je suis debutant(e)" > toto.cl
+$ openssl enc -e -aes-256-cbc -in toto.cl -out toto.ch
+
+<span class="cmt"># Q2 : déchiffrer</span>
+$ openssl enc -d -aes-256-cbc -in toto.ch -out toto.de</div>
+          <div class="qa-item">Q3. Chiffrer/déchiffrer un fichier de votre choix avec l'algorithme et le mode de votre choix.</div>
+          <div class="qa-item">Q4. Tenter de déchiffrer avec un mauvais mot de passe : comment réagit OpenSSL ?</div>
+          <p class="text-sm font-medium text-white mt-4">Q5 — Encodage Base64</p>
+          <div class="code-block"><span class="cmt"># Exemple : "Hi!" en Base64</span>
+01001000 01101001 00100001 → 010010 000110 100100 100001 → SGkh
+
+$ echo -n 'Hi!' | base64
+$ openssl enc -base64 -in monfichier.txt -out monfichier.b64
+$ openssl enc -d -base64 -in monfichier.b64 -out monfichier.txt
+
+<span class="cmt"># décoder le mot de passe fourni en base64 (TWFzdGVyUiZT)</span>
+$ openssl enc -d -base64 -in base64code -out motPasse
+$ cat motPasse</div>
+          <div class="qa-item">Q6. Déchiffrer <span class="font-mono">crypto1.chiffre</span> (AES-128-CBC) avec le mot de passe retrouvé.</div>
+
+          <p class="text-sm font-medium text-white mt-4">Lab 2 : chiffrement avec clé explicite (-K / -iv)</p>
+          <div class="code-block"><span class="cmt"># Q1 : Blowfish CBC, IV 64 bits, clé 128 bits</span>
+$ openssl enc -AlgoDeVotreChoix -in toto -out toto.chiffre \
+  -iv 0123456789ABCDEF -K 0123456789ABCDEF0123456789ABCDEF
+$ openssl enc -AlgoDeVotreChoix -d -in toto.chiffre -out toto.dechiffre \
+  -iv 0123456789ABCDEF -K 0123456789ABCDEF0123456789ABCDEF</div>
+          <div class="qa-item">Q2. Chiffrer crypto2 en Blowfish mode OFB avec IV et clé de votre choix → crypto2.chiffre.</div>
+          <div class="qa-item">Q3. Déchiffrer le cryptogramme obtenu.</div>
+          <div class="qa-item">Q4. Rechiffrer crypto1 avec le même système, la même clé et le même IV que la question précédente.</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-unlock-keyhole text-cyan-400 mr-2"></i>Partie 2 — Chiffrement asymétrique (RSA)</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm font-medium text-white">Exercice 1 : génération de clés RSA</p>
+          <div class="code-block"><span class="cmt"># Générer une paire de clés RSA 1024 bits</span>
+$ openssl genrsa -out maClePrivee.pem 1024
+$ cat maClePrivee.pem
+
+<span class="cmt"># Afficher les éléments décodés de la clé (modulus, exposants, facteurs premiers...)</span>
+$ openssl rsa -in maClePrivee.pem -text -noout
+
+<span class="cmt"># Extraire la clé publique</span>
+$ openssl rsa -in maClePrivee.pem -pubout -out maClePublique.pem
+
+<span class="cmt"># Visualiser une clé publique</span>
+$ openssl rsa -in maClePublique.pem -pubin -text -noout</div>
+          <div class="qa-item">Q3. Détailler les éléments affichés : modulus, exposant public (souvent 65537), exposant privé, nombres premiers, coefficients d'optimisation.</div>
+
+          <p class="text-sm font-medium text-white mt-4">Exercice 2 : diffusion des clés & chiffrement asymétrique</p>
+          <div class="code-block"><span class="cmt"># Protéger la clé privée par un algorithme symétrique</span>
+$ openssl rsa -in maClePrivee.pem -des3 -out maClePriveeChiffre.pem
+
+<span class="cmt"># Chiffrer un fichier avec un système symétrique (RSA reste pour la clé de session)</span>
+$ openssl enc -aes-128-cbc -in fichier1 -out fichier1chiffré
+
+<span class="cmt"># Chiffrer la clé/mot de passe symétrique avec la clé publique du destinataire</span>
+$ openssl rsautl -encrypt -in clesymetrique -pubin -inkey maClePublique.pem -out clesymetriquechiffree
+
+<span class="cmt"># Côté récepteur : déchiffrer la clé symétrique avec la clé privée</span>
+$ openssl rsautl -decrypt -in clesymetriquechiffree -inkey maClePrivee.pem -out clesymetriquedechiffree
+
+<span class="cmt"># Puis déchiffrer le fichier avec la clé symétrique récupérée</span>
+$ openssl enc -aes-128-cbc -d -in fichier1chiffré -out fichier1dechiffré</div>
+          <p class="text-xs text-gray-500">Note : RSA imposant des calculs lourds, il est généralement réservé au chiffrement de la clé de session (rapide, symétrique) plutôt qu'au fichier entier (limite ≈116 octets pour une clé 1024 bits).</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-signature text-cyan-400 mr-2"></i>Partie 3 — Empreintes & signatures</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Calculer une empreinte (MD5, SHA1, RIPEMD160...)</span>
+$ openssl dgst -md5 -out emp1.dgst fichier1
+$ openssl dgst -sha1 -out emp1.dgst fichier1
+
+<span class="cmt"># Signer l'empreinte avec la clé privée</span>
+$ openssl rsautl -sign -in emp1.dgst -inkey cléPrivee.pem -out signature1
+
+<span class="cmt"># Vérifier la signature avec la clé publique</span>
+$ openssl rsautl -verify -in signature1 -pubin -inkey cléPublique.pem -out emp1.dgst</div>
+          <p class="text-sm text-gray-400">Principe : on ne signe pas directement un gros document, on signe son empreinte (calculée par hachage).</p>
+        </div>
+      </details>
+    </div>
+    <!-- ========== TP2 ========== -->
+    <div id="tp2" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag">TP 2</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Analyse de trafic <span class="text-cyan-400">TLS avec Wireshark</span></h3>
+      <p class="text-gray-400 mb-6">Comprendre le protocole TLS en analysant des captures réseau : handshake, certificats, décryptage, indicateurs de sécurité.</p>
+
+      <div class="card p-6 mb-6">
+        <p class="font-mono text-xs text-cyan-400 mb-3">OBJECTIFS</p>
+        <ul class="text-sm space-y-1 list-disc list-inside text-gray-300">
+          <li>Comprendre le fonctionnement du protocole TLS/SSL</li>
+          <li>Identifier les différentes phases du handshake TLS</li>
+          <li>Analyser les certificats numériques</li>
+          <li>Décrypter du trafic TLS avec les clés de session</li>
+          <li>Détecter des anomalies de sécurité potentielles</li>
+        </ul>
+        <p class="font-mono text-xs text-cyan-400 mt-4 mb-2">PRÉREQUIS</p>
+        <p class="text-sm text-gray-400">TCP/IP · notions de cryptographie · Wireshark installé · OpenSSL (optionnel) · Firefox ou Chrome</p>
+      </div>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-satellite-dish text-cyan-400 mr-2"></i>Partie 1 — Capture et analyse basique du handshake</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Filtre de capture (avant capture)</span>
+tcp port 443
+
+<span class="cmt"># Filtre d'affichage (après capture) — identifier les messages du handshake</span>
+ssl.handshake
+tls.handshake   <span class="cmt"># versions récentes de Wireshark</span></div>
+          <p class="text-sm text-gray-400">Génération de trafic : capturer, visiter <span class="font-mono">https://www.example.com</span>, arrêter la capture.</p>
+          <div class="qa-item">Q1. Combien de paquets composent le handshake TLS complet ?</div>
+          <div class="qa-item">Q2. Lister l'ordre des messages : Client Hello, Server Hello, Certificate, Server Key Exchange (si présent), Server Hello Done, Client Key Exchange, Change Cipher Spec, Finished.</div>
+          <div class="qa-item">Q3. Quelle version de TLS est négociée (1.0 / 1.1 / 1.2 / 1.3) ?</div>
+          <p class="text-sm font-medium text-white mt-4">Analyse du Client Hello</p>
+          <div class="qa-item">Q4. Version maximale de TLS supportée par le client ?</div>
+          <div class="qa-item">Q5. Lister au moins 5 cipher suites proposées par le client.</div>
+          <div class="qa-item">Q6. Courbes elliptiques supportées (extension Key Share, TLS 1.3 — x25519) ?</div>
+          <div class="qa-item">Q7. Extension SNI activée ? Quel nom de domaine indiqué ?</div>
+          <div class="qa-item">Q8. Identifier les autres extensions proposées.</div>
+          <p class="text-sm font-medium text-white mt-4">Analyse du Server Hello</p>
+          <div class="qa-item">Q8bis. Cipher suite sélectionnée par le serveur ?</div>
+          <div class="qa-item">Q9. Décomposer la cipher suite (échange de clés, chiffrement, MAC).</div>
+          <div class="qa-item">Q10. Compression activée par le serveur ?</div>
+          <div class="qa-item">Q11. Longueur du Session ID ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-id-card text-cyan-400 mr-2"></i>Partie 2 — Analyse des certificats</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm text-gray-400">Développer le paquet <span class="font-mono text-cyan-400">Certificate</span> dans Wireshark pour visualiser le certificat serveur.</p>
+          <div class="qa-item">Q12. Émetteur (Issuer) du certificat ?</div>
+          <div class="qa-item">Q13. Sujet (Subject) du certificat ?</div>
+          <div class="qa-item">Q14. Période de validité du certificat ?</div>
+          <div class="qa-item">Q15. Algorithme de signature utilisé ?</div>
+          <div class="qa-item">Q16. Taille de la clé publique ?</div>
+          <div class="qa-item">Q17. Extension SAN (Subject Alternative Name) présente ? Domaines couverts ?</div>
+          <div class="qa-item">Q18. Combien de certificats envoyés par le serveur ?</div>
+          <div class="qa-item">Q19. Hiérarchie : certificat serveur → intermédiaire → racine ?</div>
+          <div class="qa-item">Q20. Le certificat racine est-il inclus dans la chaîne ? Pourquoi ?</div>
+          <div class="code-block"><span class="cmt"># Exporter le certificat (clic droit sur le champ Certificate → Export Packet Bytes → .der)</span>
+$ openssl x509 -in certificate.der -inform DER -text -noout</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-key text-cyan-400 mr-2"></i>Partie 3 — Décryptage du trafic TLS</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Linux / Mac</span>
+$ export SSLKEYLOGFILE=~/sslkeys.log
+<span class="cmt"># Windows PowerShell</span>
+$env:SSLKEYLOGFILE="C:\temp\sslkeys.log"
+
+<span class="cmt"># Puis relancer Firefox depuis ce terminal</span></div>
+          <p class="text-sm text-gray-400">Dans Wireshark : Edit → Preferences → Protocols → TLS → indiquer le chemin du fichier dans « (Pre)-Master-Secret log filename ».</p>
+          <div class="qa-item">Q21. Les requêtes HTTP sont-elles maintenant visibles en clair (filtre <span class="font-mono">http</span>) ?</div>
+          <div class="qa-item">Q22. Identifier la requête GET et analyser les en-têtes HTTP.</div>
+          <div class="qa-item">Q23. Quel User-Agent est utilisé ?</div>
+          <div class="qa-item">Q24. Code de statut de la réponse HTTP ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-magnifying-glass-chart text-cyan-400 mr-2"></i>Partie 4 & 5 — Analyse de sécurité</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm font-medium text-white">Bonnes pratiques</p>
+          <div class="qa-item">Q25. TLS 1.2 ou supérieur utilisé ?</div>
+          <div class="qa-item">Q26. Les cipher suites utilisées sont-elles considérées sécurisées ?</div>
+          <div class="qa-item">Q27. Le Perfect Forward Secrecy (PFS) est-il assuré ?</div>
+          <div class="qa-item">Q28. Clé RSA ≥ 2048 bits ou ECDSA ?</div>
+          <p class="text-sm font-medium text-white mt-4">Détection de problèmes</p>
+          <div class="qa-item">Q29. Tentatives de connexion en TLS 1.0/1.1 (protocoles obsolètes) ?</div>
+          <div class="qa-item">Q30. Cipher suites faibles proposées (RC4, DES, export ciphers) ?</div>
+          <div class="qa-item">Q31. Certificat auto-signé ou émis par une CA reconnue ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-user-secret text-cyan-400 mr-2"></i>Partie 6 (optionnel) — Simulation MITM & synthèse</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="p-3 border-l-2 border-red-400 bg-red-500/5 rounded-r text-sm text-gray-300">⚠ À réaliser uniquement dans un environnement de test contrôlé, avec l'accord de l'enseignant. Ne jamais attaquer un système sans autorisation.</div>
+          <div class="code-block"><span class="cmt"># Installation et lancement de mitmproxy (optionnel)</span>
+$ pip install mitmproxy
+$ mitmproxy -p 8080</div>
+          <div class="qa-item">Q32. Que se passe-t-il au niveau des certificats lors d'une interception MITM ?</div>
+          <div class="qa-item">Q33. Quels indicateurs sont visibles dans le navigateur ?</div>
+          <div class="qa-item">Q34. Comment un utilisateur peut-il détecter une telle attaque ?</div>
+          <p class="text-sm font-medium text-white mt-4">Synthèse</p>
+          <div class="qa-item">Q35. Différence entre TLS 1.2 et TLS 1.3 au niveau du handshake ?</div>
+          <div class="qa-item">Q36. Pourquoi le Perfect Forward Secrecy est-il important ?</div>
+          <div class="qa-item">Q37. Rôle de l'extension ALPN ?</div>
+          <div class="qa-item">Q38. Principe de la reprise de session TLS (Session Resumption) ?</div>
+          <div class="qa-item">Q39. Avantages du protocole HSTS ?</div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ========== TP3 ========== -->
+    <div id="tp3" class="scroll-mt-24 mb-20">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag">TP 3</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Hachage en ligne <span class="text-cyan-400">et attaques sur mots de passe</span></h3>
+      <p class="text-gray-400 mb-6">But : comprendre l'attaque par dictionnaire et l'attaque par force brute sur des mots de passe hachés.</p>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-database text-cyan-400 mr-2"></i>Contexte — mots de passe hachés</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm text-gray-400">De nombreux sites (Google, Amazon, Jumia…) stockent les mots de passe sous forme d'empreintes (hash), jamais en clair.</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs border-collapse">
+              <thead>
+                <tr class="text-cyan-400 border-b border-cyan-500/20">
+                  <th class="text-left py-2 pr-4">Nom</th><th class="text-left py-2 pr-4">Prénom</th><th class="text-left py-2 pr-4">Login</th><th class="text-left py-2">Mot de passe (haché)</th>
+                </tr>
+              </thead>
+              <tbody class="font-mono text-gray-400">
+                <tr class="border-b border-cyan-500/10"><td class="py-2 pr-4">Sarr</td><td class="py-2 pr-4">Malick</td><td class="py-2 pr-4">msarr</td><td class="py-2">e10adc3949ba59abbe56e057f20f883e</td></tr>
+                <tr class="border-b border-cyan-500/10"><td class="py-2 pr-4">Diatta</td><td class="py-2 pr-4">Eveline</td><td class="py-2 pr-4">ediatta</td><td class="py-2">e80b5017098950fc58aad83c8c14978e</td></tr>
+                <tr><td class="py-2 pr-4">Fall</td><td class="py-2 pr-4">Modou</td><td class="py-2 pr-4">mfall</td><td class="py-2">e99a18c428cb38d5f260853678922e03</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm font-medium text-white mt-4">Attaque par dictionnaire — principe</p>
+          <ol class="text-sm space-y-1 list-decimal list-inside text-gray-300">
+            <li>À partir d'un dictionnaire, le hacker génère des milliers d'empreintes (dictionnaire d'empreintes)</li>
+            <li>Ces empreintes sont comparées à celles stockées dans la base (nécessite un accès à la base)</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-flask text-cyan-400 mr-2"></i>Lab — règles et jeu de données</span></summary>
+        <div class="acc-body space-y-4">
+          <p class="text-sm">Système d'authentification : mots de passe constitués de lettres <span class="font-mono text-cyan-400">a, b</span> et/ou chiffres <span class="font-mono text-cyan-400">0, 1</span>, exactement <span class="text-white">4 caractères</span>.</p>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs font-mono text-cyan-400 mb-2">TABLEAU 1 — dictionnaire de mots de passe</p>
+              <div class="code-block">ab11
+aaaa
+bbbb
+1111
+0000
+11ab</div>
+            </div>
+            <div>
+              <p class="text-xs font-mono text-cyan-400 mb-2">TABLEAU 2 — empreintes stockées (MD5)</p>
+              <div class="code-block text-[11px]">19985674e5431a14512d4cb7efb11000
+74b87337454200d4d33f80c4663dc5e5
+55aa841e01d6db7733e90a5b7f9e6fff
+b59c67bf196a4758191e42f76670ceba
+44dd1ed414474e4033ac29ccb8653ddd
+e67279c2218e2ed5851e6cfc85308537</div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-list-check text-cyan-400 mr-2"></i>Travail à réaliser</span></summary>
+        <div class="acc-body space-y-3">
+          <div class="qa-item">1. Attaque par dictionnaire : à l'aide du dictionnaire (Tableau 1) et des empreintes MD5 (Tableau 2), trouver le mot de passe d'un utilisateur. Générateur en ligne : <span class="font-mono text-cyan-400">tools4noobs.com/online_tools/hash/</span></div>
+          <div class="qa-item">2. Attaque par force brute : établir le tableau de l'ensemble des mots de passe que le hacker doit essayer pour accéder au système.</div>
+          <div class="qa-item">3. En disposant uniquement de la base d'empreintes (Tableau 2), trouver le mot de passe de 3 utilisateurs (MD5). Outil : <span class="font-mono text-cyan-400">crackstation.net</span></div>
+          <div class="qa-item">4. Générer l'empreinte du mot de passe « bonjour » sur tools4noobs, puis la soumettre sur crackstation.net pour retrouver « bonjour ».</div>
+          <div class="qa-item">5. Choisir un mot de passe complexe (absent des dictionnaires), répéter l'étape 4 pour montrer que crackstation.net n'inverse pas la fonction de hachage mais s'appuie sur une base de données d'empreintes précalculées.</div>
+        </div>
+      </details>
+    </div>
+    <!-- ========== TP4 ========== -->
+    <div id="tp4" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="section-tag">TP 4</span>
+      </div>
+      <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Configuration d'un Proxy Squid <span class="text-cyan-400">avec SquidGuard</span></h3>
+      <p class="text-gray-400 mb-6">Mettre en place un proxy HTTP/HTTPS filtré : ACL, catégories de blocage, authentification, monitoring.</p>
+
+      <div class="card p-6 mb-6">
+        <p class="font-mono text-xs text-cyan-400 mb-3">OBJECTIFS PÉDAGOGIQUES</p>
+        <ul class="text-sm space-y-1 list-disc list-inside text-gray-300">
+          <li>Comprendre le rôle d'un serveur proxy dans une infrastructure réseau</li>
+          <li>Installer et configurer Squid en tant que proxy HTTP/HTTPS</li>
+          <li>Mettre en place un système de filtrage avec SquidGuard</li>
+          <li>Configurer des ACL (Access Control Lists) pour le contrôle d'accès</li>
+          <li>Analyser les logs et surveiller l'activité du proxy</li>
+        </ul>
+        <p class="font-mono text-xs text-cyan-400 mt-4 mb-2">PRÉREQUIS</p>
+        <p class="text-sm text-gray-400">VM Linux (Debian/Ubuntu recommandé) · accès root/sudo · administration Linux · notions TCP/IP</p>
+      </div>
+
+      <details class="acc" open>
+        <summary><span><i class="fa-solid fa-server text-cyan-400 mr-2"></i>Introduction — Proxy, Squid, SquidGuard</span></summary>
+        <div class="acc-body space-y-3">
+          <p class="text-sm">Un <span class="text-white">serveur proxy</span> est un intermédiaire entre les clients d'un réseau local et Internet : filtrage du contenu, mise en cache, contrôle/audit des accès, sécurité renforcée, économie de bande passante.</p>
+          <p class="text-sm"><span class="text-white">Squid</span> : proxy open source populaire (HTTP, HTTPS, FTP) avec cache et contrôle d'accès avancés.</p>
+          <p class="text-sm"><span class="text-white">SquidGuard</span> : redirecteur de contenu pour Squid, filtre les URL par catégories (sites adultes, réseaux sociaux…) et listes noires/blanches personnalisées.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-gear text-cyan-400 mr-2"></i>Partie 1 — Installation et configuration de Squid</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Installation (Debian/Ubuntu)</span>
+apt update
+apt install squid -y
+squid -v
+systemctl start squid
+systemctl enable squid
+systemctl status squid</div>
+          <div class="code-block"><span class="cmt"># Sauvegarde avant modification</span>
+cp /etc/squid/squid.conf /etc/squid/squid.conf.backup
+nano /etc/squid/squid.conf</div>
+          <div class="code-block"><span class="cmt"># Configuration de base</span>
+http_port 3128
+visible_hostname proxy.local
+cache_mem 256 MB
+cache_dir ufs /var/spool/squid 1000 16 256
+
+acl localnet src 192.168.1.0/24
+http_access allow localnet
+
+acl numeric_IPs url_regex ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+
+http_access deny numeric_IPs
+http_access deny all</div>
+          <p class="text-sm font-medium text-white mt-2">Configuration des ACL</p>
+          <div class="code-block">acl localnet src 192.168.1.0/24
+acl management src 192.168.1.10/32
+acl SSL_ports port 443
+acl Safe_ports port 80 21 443 563 873 1025-65535
+acl CONNECT method CONNECT
+acl working_hours time MTWHF 08:00-18:00
+acl blocked_sites dstdomain .facebook.com .youtube.com
+
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+http_access deny blocked_sites
+http_access allow localnet working_hours
+http_access allow management
+http_access deny all</div>
+          <div class="code-block"><span class="cmt"># Cache et redémarrage</span>
+squid -z
+squid -k parse
+systemctl restart squid</div>
+          <p class="text-sm font-medium text-white mt-4">Questions — Partie 1</p>
+          <div class="qa-item">1. Quel est le rôle du paramètre <span class="font-mono text-cyan-400">cache_mem</span> ?</div>
+          <div class="qa-item">2. Différence entre les ACL de type <span class="font-mono">src</span> et <span class="font-mono">dst</span> ?</div>
+          <div class="qa-item">3. Comment vérifier que Squid écoute bien sur le port 3128 ?</div>
+          <div class="qa-item">4. Que signifie la directive <span class="font-mono">http_access deny all</span> ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-filter text-cyan-400 mr-2"></i>Partie 2 — Installation et configuration de SquidGuard</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Installation</span>
+apt install squidguard -y
+mkdir -p /var/lib/squidguard/db
+mkdir -p /var/log/squidguard
+chown -R proxy:proxy /var/lib/squidguard
+chown -R proxy:proxy /var/log/squidguard</div>
+          <div class="code-block"><span class="cmt"># Téléchargement d'une blacklist (ex. Toulouse)</span>
+cd /var/lib/squidguard/db
+wget http://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
+tar xvzf blacklists.tar.gz
+chown -R proxy:proxy blacklists/</div>
+          <div class="code-block"><span class="cmt"># /etc/squidguard/squidguard.conf</span>
+dbhome /var/lib/squidguard/db
+logdir /var/log/squidguard
+
+dest adult    { domainlist blacklists/adult/domains       urllist blacklists/adult/urls       log adult.log }
+dest social   { domainlist blacklists/social_networks/domains urllist blacklists/social_networks/urls log social.log }
+dest gambling { domainlist blacklists/gambling/domains    urllist blacklists/gambling/urls    log gambling.log }
+dest malware  { domainlist blacklists/malware/domains     urllist blacklists/malware/urls     log malware.log }
+dest whitelist { domainlist /var/lib/squidguard/db/whitelist/domains }
+
+acl {
+  default {
+    pass whitelist !adult !social !gambling !malware all
+    redirect http://proxy.local/blocked.html
+  }
+}</div>
+          <div class="code-block"><span class="cmt"># Liste blanche</span>
+mkdir -p /var/lib/squidguard/db/whitelist
+nano /var/lib/squidguard/db/whitelist/domains
+<span class="cmt"># google.com / wikipedia.org / github.com / stackoverflow.com</span>
+
+<span class="cmt"># Compilation des listes</span>
+squidGuard -C all
+chown -R proxy:proxy /var/lib/squidguard/db</div>
+          <div class="code-block"><span class="cmt"># Intégration avec Squid (/etc/squid/squid.conf, avant http_access)</span>
+url_rewrite_program /usr/bin/squidGuard -c /etc/squidguard/squidguard.conf
+url_rewrite_children 5
+systemctl restart squid</div>
+          <p class="text-sm font-medium text-white mt-4">Questions — Partie 2</p>
+          <div class="qa-item">1. Différence entre une <span class="font-mono">domainlist</span> et une <span class="font-mono">urllist</span> ?</div>
+          <div class="qa-item">2. Comment ajouter une nouvelle catégorie de filtrage ?</div>
+          <div class="qa-item">3. Pourquoi faut-il compiler les listes avec <span class="font-mono">squidGuard -C all</span> ?</div>
+          <div class="qa-item">4. Comment autoriser temporairement un site bloqué ?</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-vial text-cyan-400 mr-2"></i>Partie 3 — Tests, vérifications et analyse des logs</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Poste client (ligne de commande)</span>
+export http_proxy=http://192.168.1.1:3128
+export https_proxy=http://192.168.1.1:3128
+
+<span class="cmt"># Tests</span>
+curl -x http://192.168.1.1:3128 http://www.google.com
+curl -x http://192.168.1.1:3128 http://www.facebook.com
+
+tail -f /var/log/squid/access.log
+tail -f /var/log/squidguard/adult.log</div>
+          <p class="text-sm text-gray-400">Firefox : Paramètres → Général → Paramètres réseau → Configuration manuelle du proxy → IP + port 3128.</p>
+          <div class="code-block"><span class="cmt"># Analyse des logs (format: timestamp durée IP code/status taille méthode URL user hiérarchie/type)</span>
+awk '{ print $7}' /var/log/squid/access.log | sort | uniq -c | sort -rn | head -10   <span class="cmt"># sites les + visités</span>
+awk '{ print $8}' /var/log/squid/access.log | sort | uniq -c | sort -rn             <span class="cmt"># utilisateurs les + actifs</span>
+awk '{ print $4}' /var/log/squid/access.log | cut -d'/' -f1 | sort | uniq -c        <span class="cmt"># stats par code de réponse</span></div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-user-lock text-cyan-400 mr-2"></i>Partie 4 — Configuration avancée (auth & bande passante)</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block"><span class="cmt"># Authentification basique</span>
+apt install apache2-utils -y
+htpasswd -c /etc/squid/passwd user1
+htpasswd /etc/squid/passwd user2
+chown proxy:proxy /etc/squid/passwd
+chmod 640 /etc/squid/passwd</div>
+          <div class="code-block"><span class="cmt"># /etc/squid/squid.conf</span>
+auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd
+auth_param basic children 5
+auth_param basic realm Proxy Authentication Required
+auth_param basic credentialsttl 2 hours
+acl authenticated proxy_auth REQUIRED
+http_access allow authenticated</div>
+          <div class="code-block"><span class="cmt"># squidguard.conf — groupes d'utilisateurs</span>
+src admins    { user admin1 admin2 }
+src employees { user employee1 employee2 employee3 }
+
+acl {
+  admins    { pass all }
+  employees { pass !adult !social !gambling all  redirect http://proxy.local/blocked.html }
+  default   { pass !adult !social !gambling !malware all  redirect http://proxy.local/blocked.html }
+}</div>
+          <div class="code-block"><span class="cmt"># Limitation de bande passante (squid.conf)</span>
+delay_pools 2
+delay_class 1 1
+delay_parameters 1 128000/128000
+delay_access 1 allow localnet
+
+delay_class 2 2
+delay_parameters 2 64000/64000 8000/8000
+delay_access 2 allow localnet</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-list-check text-cyan-400 mr-2"></i>Travail à réaliser — 5 exercices</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="p-3 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Exercice 1 — Configuration de base</p>
+            <p class="text-sm text-gray-300">Installer Squid, écoute port 3128, autoriser uniquement le réseau local 192.168.1.0/24, tester l'accès Internet via le proxy, capturer et analyser les logs.</p>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Exercice 2 — Mise en place du filtrage</p>
+            <p class="text-sm text-gray-300">Installer SquidGuard, télécharger une blacklist, bloquer adult/social/gambling, créer une liste blanche de 5 sites, tester et vérifier les logs.</p>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Exercice 3 — Gestion des accès</p>
+            <p class="text-sm text-gray-300">Deux plages horaires (travail 8h-18h, pause 12h-14h) ; bloquer les réseaux sociaux en heures de travail, tout autoriser en pause ; ACL direction avec accès illimité ; tester et documenter.</p>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Exercice 4 — Authentification</p>
+            <p class="text-sm text-gray-300">Authentification basique, 3 utilisateurs (admin, user1, user2), règles différenciées : admin a accès à tout, les autres sont filtrés ; tester chaque compte.</p>
+          </div>
+          <div class="p-3 border border-cyan-500/15 rounded-lg">
+            <p class="text-cyan-400 text-sm font-mono mb-1">Exercice 5 — Analyse et monitoring</p>
+            <p class="text-sm text-gray-300">Générer ≥20 requêtes via le proxy, analyser les logs avec awk, identifier les 10 sites les plus visités, compter les requêtes bloquées, calculer le taux de cache hit.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-circle-question text-cyan-400 mr-2"></i>Questions de synthèse</span></summary>
+        <div class="acc-body space-y-3">
+          <div class="qa-item">1. Fonctionnement du cache de Squid et ses avantages.</div>
+          <div class="qa-item">2. Différences blacklist / whitelist, et cas d'usage de chacune.</div>
+          <div class="qa-item">3. Comment SquidGuard interagit-il avec Squid ?</div>
+          <div class="qa-item">4. Avantages et inconvénients de l'authentification par proxy.</div>
+          <div class="qa-item">5. Proposer une architecture complète de filtrage pour une entreprise de 50 personnes (direction, employés, stagiaires).</div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span><i class="fa-solid fa-folder-tree text-cyan-400 mr-2"></i>Annexes — commandes & fichiers utiles</span></summary>
+        <div class="acc-body space-y-4">
+          <div class="code-block">systemctl reload squid          <span class="cmt"># recharger sans interruption</span>
+squid -k parse                  <span class="cmt"># tester la configuration</span>
+rm -rf /var/spool/squid/* && squid -z   <span class="cmt"># vider le cache</span>
+netstat -tnlp | grep 3128       <span class="cmt"># connexions actives</span>
+squid -k rotate                 <span class="cmt"># rotation des logs</span>
+squid -N -d1                    <span class="cmt"># debug</span></div>
+          <ul class="text-sm text-gray-400 space-y-1">
+            <li><span class="font-mono text-cyan-400">/etc/squid/squid.conf</span> — configuration principale de Squid</li>
+            <li><span class="font-mono text-cyan-400">/etc/squidguard/squidguard.conf</span> — configuration de SquidGuard</li>
+            <li><span class="font-mono text-cyan-400">/var/log/squid/access.log</span> — logs d'accès</li>
+            <li><span class="font-mono text-cyan-400">/var/log/squid/cache.log</span> — logs du cache</li>
+            <li><span class="font-mono text-cyan-400">/var/log/squidguard/*.log</span> — logs de filtrage</li>
+          </ul>
+          <p class="text-xs text-gray-500">Compte-rendu attendu : fichiers de configuration utilisés, captures des tests, analyse des logs avec statistiques, réponses aux questions, conclusion sur l'utilité du filtrage proxy en entreprise.</p>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+<!-- FIN TRAVAUX PRATIQUES & DIRIGÉS — pour ajouter un TP5, dupliquer un bloc <div id="tpX"> et ajouter sa carte dans TP_INDEX plus haut -->
 
 <footer class="py-12 border-t border-cyan-500/10 relative">
   <div class="max-w-7xl mx-auto px-6">
@@ -1654,8 +3053,8 @@
         <h4 class="font-mono text-xs text-gray-500 mb-3">ANNÉE</h4>
         <ul class="space-y-2 text-sm text-gray-400">
           <li>2025-2026</li>
-          <li>Chapitres 1 & 2</li>
-          <li class="text-cyan-400">Site interactif éducatif</li>
+          <li>Chapitres 1, 2 & 3 · TD 1-4 · TP 1-4</li>
+          <li class="text-cyan-400">Site interactif éducatif — en évolution</li>
         </ul>
       </div>
     </div>
@@ -1677,6 +3076,29 @@
       p.style.animationDuration = (6 + Math.random()*6) + 's';
       particlesContainer.appendChild(p);
     }
+  }
+
+  function toggleMobileMenu(){
+    const menu = document.getElementById('mobileMenu');
+    const icon = document.getElementById('mobileMenuIcon');
+    const isHidden = menu.classList.contains('hidden');
+    if(isHidden){
+      menu.classList.remove('hidden');
+      icon.classList.remove('fa-bars');
+      icon.classList.add('fa-xmark');
+      document.body.style.overflow = 'hidden';
+    } else {
+      closeMobileMenu();
+    }
+  }
+
+  function closeMobileMenu(){
+    const menu = document.getElementById('mobileMenu');
+    const icon = document.getElementById('mobileMenuIcon');
+    menu.classList.add('hidden');
+    icon.classList.remove('fa-xmark');
+    icon.classList.add('fa-bars');
+    document.body.style.overflow = '';
   }
 
   function showToast(msg){
@@ -1834,6 +3256,196 @@
         "99,9999 % (temps d'interruption < 5 min par an)"
       ],
       correct: 1
+    },
+    {
+      q: "Dans le chiffre de César, quelle est la formule de chiffrement d'une lettre X avec une clé K ?",
+      options: [
+        "E(K,X) = (X - K) mod 26",
+        "E(K,X) = (X + K) mod 26",
+        "E(K,X) = (X × K) mod 26",
+        "E(K,X) = (X / K) mod 26"
+      ],
+      correct: 1
+    },
+    {
+      q: "Quelle est la principale faiblesse des chiffrements par substitution monoalphabétique ?",
+      options: [
+        "Ils sont trop lents à calculer",
+        "Ils nécessitent une clé trop longue",
+        "Ils restent vulnérables à l'analyse fréquentielle des lettres",
+        "Ils ne peuvent chiffrer que des chiffres"
+      ],
+      correct: 2
+    },
+    {
+      q: "Le chiffrement de Vigenère est un exemple de :",
+      options: [
+        "Substitution monoalphabétique",
+        "Substitution polyalphabétique",
+        "Transposition pure",
+        "Chiffrement asymétrique"
+      ],
+      correct: 1
+    },
+    {
+      q: "Le principe de Kerckhoffs stipule que la sécurité d'un système cryptographique doit reposer sur :",
+      options: [
+        "Le secret de l'algorithme utilisé",
+        "Le secret de la clé, même si l'algorithme est connu de l'attaquant",
+        "La complexité du matériel utilisé",
+        "Le nombre d'utilisateurs du système"
+      ],
+      correct: 1
+    },
+    {
+      q: "En cryptographie symétrique, quelle relation lie le chiffrement et le déchiffrement ?",
+      options: [
+        "C = E(K, M) et M = D(K, C), avec la même clé K",
+        "C = E(Kpub, M) et M = D(Kpriv, C), avec deux clés différentes",
+        "Le déchiffrement ne nécessite aucune clé",
+        "La clé de chiffrement change à chaque bloc automatiquement"
+      ],
+      correct: 0
+    },
+    {
+      q: "Dans le mode opératoire ECB (Electronic Code Book) :",
+      options: [
+        "Chaque bloc est chiffré indépendamment avec la même clé",
+        "Chaque bloc est XORé avec le chiffré du bloc précédent",
+        "Un vecteur d'initialisation est obligatoire",
+        "Les blocs sont chiffrés dans un ordre aléatoire"
+      ],
+      correct: 0
+    },
+    {
+      q: "Quel est l'intérêt principal du mode CBC par rapport au mode ECB ?",
+      options: [
+        "Il est plus rapide à calculer",
+        "Il masque les motifs répétitifs du texte clair grâce au chaînage des blocs",
+        "Il ne nécessite pas de clé secrète",
+        "Il fonctionne uniquement avec des blocs de 4 bits"
+      ],
+      correct: 1
+    },
+    {
+      q: "En cryptographie asymétrique, quelle propriété permet d'assurer la confidentialité d'un message envoyé à B ?",
+      options: [
+        "A chiffre le message avec sa propre clé privée",
+        "A chiffre le message avec la clé publique de B ; seul B peut le déchiffrer avec sa clé privée",
+        "A et B utilisent la même clé secrète",
+        "Le message est envoyé en clair avec une signature"
+      ],
+      correct: 1
+    },
+    {
+      q: "Sur quel problème mathématique repose la sécurité de l'algorithme RSA ?",
+      options: [
+        "Le problème du logarithme discret",
+        "Le problème de la factorisation des grands entiers",
+        "Le problème du voyageur de commerce",
+        "Le problème de la satisfaction booléenne (SAT)"
+      ],
+      correct: 1
+    },
+    {
+      q: "Dans l'échange de clé Diffie-Hellman, que calcule chaque partie pour obtenir la clé commune K ?",
+      options: [
+        "K = A + B mod p",
+        "K = Bᵃ mod p = Aᵇ mod p = gᵃᵇ mod p",
+        "K = g × p",
+        "K = (A - B) mod p"
+      ],
+      correct: 1
+    },
+    {
+      q: "Dans Diffie-Hellman, quelles sont les valeurs réellement secrètes qui ne transitent jamais sur le réseau ?",
+      options: [
+        "g et p, les paramètres publics",
+        "A et B, les valeurs échangées",
+        "Les exposants privés a (pour A) et b (pour B)",
+        "Aucune valeur n'est secrète dans ce protocole"
+      ],
+      correct: 2
+    },
+    {
+      q: "Une fonction de hachage cryptographique doit notamment garantir :",
+      options: [
+        "Une taille de sortie variable selon l'entrée",
+        "La réversibilité complète (retrouver l'entrée à partir du hash)",
+        "La résistance aux collisions (deux entrées différentes ne donnent pas le même hash)",
+        "Un chiffrement réciproque avec la même clé"
+      ],
+      correct: 2
+    },
+    {
+      q: "Dans une signature numérique, l'émetteur B signe généralement :",
+      options: [
+        "Le message en clair directement avec sa clé publique",
+        "L'empreinte H(m) du message, avec sa clé privée",
+        "L'empreinte du message, avec la clé publique du destinataire",
+        "Le mot de passe de l'utilisateur"
+      ],
+      correct: 1
+    },
+    {
+      q: "Que permet de vérifier une signature numérique valide, en plus de l'authenticité ?",
+      options: [
+        "La confidentialité du message uniquement",
+        "L'intégrité du message et la non-répudiation par l'émetteur",
+        "La disponibilité du serveur d'envoi",
+        "La vitesse de transmission du message"
+      ],
+      correct: 1
+    },
+    {
+      q: "Dans le protocole de Needham-Schroeder (A → B : {Na,A}Kb puis B → A : {Na,Nb}Ka puis A → B : {Nb}Kb), le rôle des nonces Na et Nb est principalement de garantir :",
+      options: [
+        "La confidentialité de la clé publique",
+        "La fraîcheur des échanges et l'authentification mutuelle",
+        "La compression des messages échangés",
+        "La compatibilité avec le mode ECB"
+      ],
+      correct: 1
+    },
+    {
+      q: "Une attaque de l'Homme du Milieu (Man In The Middle) sur un échange de clés publiques consiste à :",
+      options: [
+        "Deviner le mot de passe par force brute",
+        "S'interposer entre A et B et substituer sa propre clé publique à celle de la victime",
+        "Modifier l'horloge système des deux machines",
+        "Bloquer totalement la communication réseau"
+      ],
+      correct: 1
+    },
+    {
+      q: "Quel est le rôle principal d'un certificat numérique ?",
+      options: [
+        "Chiffrer directement toutes les données échangées",
+        "Faire authentifier une entité et sa clé publique par une tierce partie de confiance (autorité de certification)",
+        "Remplacer entièrement le chiffrement symétrique",
+        "Stocker les mots de passe des utilisateurs"
+      ],
+      correct: 1
+    },
+    {
+      q: "Dans le chiffrement hybride (confidentialité + authentification + intégrité), que fait typiquement A avant de chiffrer le message avec la clé publique de B ?",
+      options: [
+        "Rien, il chiffre directement le message en clair",
+        "Il signe l'empreinte du message avec sa propre clé privée",
+        "Il envoie le message en clair par un second canal",
+        "Il supprime la clé publique de B"
+      ],
+      correct: 1
+    },
+    {
+      q: "Dans le protocole d'échange de message par XOR (A1 = M⊕a, B1 = A1⊕b, A2 = B1⊕a), un attaquant C qui intercepte A1, B1 et A2 peut :",
+      options: [
+        "Ne jamais retrouver M, même avec les trois valeurs",
+        "Retrouver M en combinant les valeurs interceptées par XOR",
+        "Retrouver uniquement la clé a de A",
+        "Retrouver M uniquement s'il connaît déjà b"
+      ],
+      correct: 1
     }
   ];
 
@@ -1893,16 +3505,18 @@
     document.getElementById('quizContent').classList.add('hidden');
     document.getElementById('quizResult').classList.remove('hidden');
     document.getElementById('finalScore').textContent = score;
-    
+    document.getElementById('totalScore').textContent = quizData.length;
+
+    const ratio = score / quizData.length;
     let msg = '';
     let icon = 'fa-trophy';
-    if(score === 10){
+    if(ratio === 1){
       msg = 'Parfait ! Vous maîtrisez parfaitement les bases de la sécurité des réseaux.';
-    } else if(score >= 8){
+    } else if(ratio >= 0.8){
       msg = 'Excellent travail ! Vous avez une très bonne compréhension du cours.';
-    } else if(score >= 6){
+    } else if(ratio >= 0.6){
       msg = 'Bon travail ! Continuez à réviser pour approfondir vos connaissances.';
-    } else if(score >= 4){
+    } else if(ratio >= 0.4){
       msg = 'Passable. Il est recommandé de revoir le cours en détail.';
     } else {
       msg = 'À retravailler. Reprenez le cours depuis le début.';
