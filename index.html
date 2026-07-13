@@ -258,6 +258,7 @@
   .toast{
     position:fixed;
     bottom:30px;right:30px;
+    max-width:min(360px,calc(100vw - 60px));
     padding:14px 22px;
     background:var(--card);
     backdrop-filter:blur(10px);
@@ -265,12 +266,24 @@
     border-radius:8px;
     color:var(--fg);
     font-size:14px;
+    line-height:1.4;
     transform:translateX(400px);
     transition:transform .4s cubic-bezier(.4,0,.2,1);
     z-index:1000;
     box-shadow:0 10px 40px rgba(0,255,234,0.2);
   }
   .toast.show{transform:translateX(0)}
+
+  @media (max-width:640px){
+    .toast{
+      left:16px;right:16px;bottom:16px;
+      max-width:none;
+      width:auto;
+      transform:translateY(120%);
+      text-align:center;
+    }
+    .toast.show{transform:translateY(0)}
+  }
 
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-track{background:var(--bg-2)}
@@ -553,6 +566,8 @@
   </div>
 
   <!-- ==== Menu mobile (Plan du cours / TD / TP) ==== -->
+</nav>
+
   <div id="mobileMenu" class="md:hidden hidden fixed top-[65px] left-0 right-0 bottom-0 z-40 bg-black/95 backdrop-blur-lg overflow-y-auto px-4 py-4 border-t border-cyan-500/10">
     <a href="#intro" class="mob-link font-mono" onclick="closeMobileMenu()">ACCUEIL</a>
 
@@ -616,7 +631,6 @@
 
     <a href="#quiz" class="mob-link font-mono mt-2" onclick="closeMobileMenu()">QUIZ</a>
   </div>
-</nav>
 
 <header class="relative min-h-screen flex items-center bg-radial scanline overflow-hidden pt-20">
   <div class="max-w-7xl mx-auto px-6 py-20 relative z-10 w-full">
@@ -1881,48 +1895,6 @@
   </div>
 </section>
 
-<section id="quiz" class="py-24 border-t border-cyan-500/10 bg-radial">
-  <div class="max-w-4xl mx-auto px-6">
-    <div class="mb-16 text-center">
-      <span class="section-tag">ÉVALUATION</span>
-      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Testez vos <span class="text-cyan-400 glow-cyan">connaissances</span></h2>
-      <p class="text-gray-400 mt-4">10 questions pour valider votre compréhension du cours.</p>
-    </div>
-
-    <div class="card p-8">
-      <div class="flex items-center justify-between mb-4">
-        <div class="font-mono text-xs text-gray-500">
-          QUESTION <span id="qNum" class="text-cyan-400">1</span> / <span id="qTotal">10</span>
-        </div>
-        <div class="font-mono text-xs">
-          SCORE: <span id="score" class="text-green-400">0</span>
-        </div>
-      </div>
-      <div class="progress-bar mb-8">
-        <div id="progressFill" class="progress-fill" style="width:10%"></div>
-      </div>
-
-      <div id="quizContent">
-        <h3 id="questionText" class="text-xl font-bold mb-6 leading-relaxed"></h3>
-        <div id="options" class="space-y-3"></div>
-      </div>
-
-      <div id="quizResult" class="hidden text-center py-8">
-        <div class="w-24 h-24 mx-auto mb-6 rounded-full border-2 border-cyan-400 flex items-center justify-center">
-          <i id="resultIcon" class="fa-solid fa-trophy text-cyan-400 text-4xl"></i>
-        </div>
-        <h3 class="text-3xl font-bold mb-2">Quiz terminé !</h3>
-        <p class="text-gray-400 mb-6">Votre score final</p>
-        <div class="text-6xl font-bold mb-2">
-          <span id="finalScore" class="text-cyan-400 glow-cyan">0</span>
-          <span class="text-gray-500 text-3xl">/<span id="totalScore">10</span></span>
-        </div>
-        <p id="resultMessage" class="text-gray-400 mb-8"></p>
-        <button onclick="restartQuiz()" class="btn-cyber">RECOMMENCER</button>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ============================================================ -->
 <!-- CHAPITRE 3 : LA CRYPTOGRAPHIE                                 -->
@@ -3028,6 +3000,49 @@ squid -N -d1                    <span class="cmt"># debug</span></div>
 </section>
 <!-- FIN TRAVAUX PRATIQUES & DIRIGÉS — pour ajouter un TP5, dupliquer un bloc <div id="tpX"> et ajouter sa carte dans TP_INDEX plus haut -->
 
+<section id="quiz" class="py-24 border-t border-cyan-500/10 bg-radial">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="mb-16 text-center">
+      <span class="section-tag">ÉVALUATION</span>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mt-4">Testez vos <span class="text-cyan-400 glow-cyan">connaissances</span></h2>
+      <p class="text-gray-400 mt-4"><span id="quizIntroCount">29</span> questions pour valider votre compréhension du cours.</p>
+    </div>
+
+    <div class="card p-8">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-mono text-xs text-gray-500">
+          QUESTION <span id="qNum" class="text-cyan-400">1</span> / <span id="qTotal">10</span>
+        </div>
+        <div class="font-mono text-xs">
+          SCORE: <span id="score" class="text-green-400">0</span>
+        </div>
+      </div>
+      <div class="progress-bar mb-8">
+        <div id="progressFill" class="progress-fill" style="width:10%"></div>
+      </div>
+
+      <div id="quizContent">
+        <h3 id="questionText" class="text-xl font-bold mb-6 leading-relaxed"></h3>
+        <div id="options" class="space-y-3"></div>
+      </div>
+
+      <div id="quizResult" class="hidden text-center py-8">
+        <div class="w-24 h-24 mx-auto mb-6 rounded-full border-2 border-cyan-400 flex items-center justify-center">
+          <i id="resultIcon" class="fa-solid fa-trophy text-cyan-400 text-4xl"></i>
+        </div>
+        <h3 class="text-3xl font-bold mb-2">Quiz terminé !</h3>
+        <p class="text-gray-400 mb-6">Votre score final</p>
+        <div class="text-6xl font-bold mb-2">
+          <span id="finalScore" class="text-cyan-400 glow-cyan">0</span>
+          <span class="text-gray-500 text-3xl">/<span id="totalScore">10</span></span>
+        </div>
+        <p id="resultMessage" class="text-gray-400 mb-8"></p>
+        <button onclick="restartQuiz()" class="btn-cyber">RECOMMENCER</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="py-12 border-t border-cyan-500/10 relative">
   <div class="max-w-7xl mx-auto px-6">
     <div class="grid md:grid-cols-3 gap-8 mb-8">
@@ -3458,6 +3473,8 @@ squid -N -d1                    <span class="cmt"># debug</span></div>
     const q = quizData[currentQ];
     document.getElementById('qNum').textContent = currentQ + 1;
     document.getElementById('qTotal').textContent = quizData.length;
+    const introCountEl = document.getElementById('quizIntroCount');
+    if(introCountEl) introCountEl.textContent = quizData.length;
     document.getElementById('progressFill').style.width = ((currentQ + 1) / quizData.length * 100) + '%';
     document.getElementById('questionText').textContent = q.q;
     
