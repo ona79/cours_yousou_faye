@@ -23,13 +23,14 @@
     --border:rgba(0,255,234,0.18);
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%}
   body{
     margin:0;
     font-family:'Space Grotesk',sans-serif;
     background:var(--bg);
     color:var(--fg);
     overflow-x:hidden;
+    max-width:100%;
   }
   .font-display{font-family:'Syncopate',sans-serif;letter-spacing:.05em}
   .font-mono{font-family:'JetBrains Mono',monospace}
@@ -469,6 +470,9 @@
 </style>
 </head>
 <body class="bg-grid">
+<script>
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+</script>
 
 <div id="toast" class="toast"></div>
 <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
@@ -571,7 +575,7 @@
   <div id="mobileMenu" class="md:hidden hidden fixed top-[65px] left-0 right-0 bottom-0 z-40 bg-black/95 backdrop-blur-lg overflow-y-auto px-4 py-4 border-t border-cyan-500/10">
     <a href="#intro" class="mob-link font-mono" onclick="closeMobileMenu()">ACCUEIL</a>
 
-    <details class="acc mt-2" open>
+    <details class="acc mt-2">
       <summary class="font-mono text-sm">PLAN DU COURS</summary>
       <div class="acc-body">
         <a href="#intro" class="mob-link" onclick="closeMobileMenu()">01 · Introduction</a>
@@ -1910,7 +1914,7 @@
     </div>
 
     <!-- 1. Introduction -->
-    <details id="crypto-intro" class="acc scroll-mt-24" open>
+    <details id="crypto-intro" class="acc scroll-mt-24">
       <summary><span><i class="fa-solid fa-key text-cyan-400 mr-2"></i>1. Introduction & définitions</span></summary>
       <div class="acc-body space-y-4">
         <p><span class="text-white">Cryptologie</span> : ancien art du secret ou nouvelle science des messages secrets ; comprend la <span class="text-cyan-400">cryptographie</span> et la <span class="text-cyan-400">cryptanalyse</span>.</p>
@@ -2236,7 +2240,7 @@ Vérification : h = H(Kab ┃ H(Kab ┃ m))</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Cryptographie <span style="color:var(--warning)">— chiffrement traditionnel</span></h3>
       <p class="text-gray-400 mb-6">Table de correspondance alphabet/entiers (A=0 … Z=25). Message étudié : <span class="font-mono text-cyan-400">M = WELCOMETOUASZ</span>.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-shuffle mr-2" style="color:var(--warning)"></i>Exercice 1 — Chiffre de César (clé K=5)</span></summary>
         <div class="acc-body space-y-3">
           <div class="qa-item">1. Trouver le chiffrement C de M en utilisant la méthode de César avec une clé K = 5.</div>
@@ -2277,7 +2281,7 @@ K= P O I U Y T R E Z A Q S D F G H J K L M W X C V B N</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Cryptographie <span style="color:var(--warning)">— chiffrement moderne</span></h3>
       <p class="text-gray-400 mb-6">Texte clair étudié : <span class="font-mono text-cyan-400">M = 11001010111011</span>. Blocs de 4 bits.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-table-cells-large mr-2" style="color:var(--warning)"></i>Exercice 1 — Mode ECB (décalage circulaire à droite)</span></summary>
         <div class="acc-body space-y-3">
           <p class="text-sm text-gray-400">Fonction de décalage à droite d'un bit E = xᵢ≫y (décalage circulaire), appliquée sur un bloc de 4 bits : E(b0b1b2b3) → b0≫2 b1≫2 b2≫2 b3≫2.</p>
@@ -2321,7 +2325,7 @@ K= P O I U Y T R E Z A Q S D F G H J K L M W X C V B N</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Protocoles <span style="color:var(--warning)">cryptographiques</span></h3>
       <p class="text-gray-400 mb-6">Analyse de propriétés de sécurité : secret, authentification mutuelle, fraîcheur des données échangées.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-diagram-project mr-2" style="color:var(--warning)"></i>Exercice 1 — Protocole de Needham-Schroeder</span></summary>
         <div class="acc-body space-y-3">
           <div class="code-block">A → B : {Na.A}Kb
@@ -2362,7 +2366,7 @@ B → A : {A, B, Na, s}Kab</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Protocoles <span style="color:var(--warning)">de sécurité</span></h3>
       <p class="text-gray-400 mb-6">Échange de clé (Diffie-Hellman), échange de message par XOR, et étude de cas d'une tontine chiffrée.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-key mr-2" style="color:var(--warning)"></i>Exercice 1 — Échange de clé Diffie-Hellman</span></summary>
         <div class="acc-body space-y-4">
           <p class="text-sm text-gray-400">A choisit un secret <span class="font-mono">a</span> et calcule A = gᵃ mod p ; B choisit <span class="font-mono">b</span> et calcule B = gᵇ mod p. Échange : A envoie (g,p,A) à B ; B répond avec B.</p>
@@ -2453,7 +2457,7 @@ k = Bᵃ mod p (côté A)             k = Aᵇ mod p (côté B)</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Chiffrement symétrique / asymétrique / hachage <span class="text-cyan-400">avec OpenSSL</span></h3>
       <p class="text-gray-400 mb-6">But : utiliser OpenSSL pour chiffrer/déchiffrer et générer des signatures.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-terminal text-cyan-400 mr-2"></i>Présentation d'OpenSSL</span></summary>
         <div class="acc-body space-y-3">
           <p class="text-sm">Boîte à outils cryptographiques (SSL/TLS) offrant une bibliothèque C et une commande en ligne <span class="font-mono text-cyan-400">openssl</span> pour : chiffrement/déchiffrement (DES, IDEA, RC2, RC4, Blowfish…), création de clés RSA, calcul d'empreintes (MD5, SHA, RIPEMD160…), création de certificats X509, signature/chiffrement S/MIME, tests clients/serveurs SSL/TLS.</p>
@@ -2579,7 +2583,7 @@ $ openssl rsautl -verify -in signature1 -pubin -inkey cléPublique.pem -out emp1
         <p class="text-sm text-gray-400">TCP/IP · notions de cryptographie · Wireshark installé · OpenSSL (optionnel) · Firefox ou Chrome</p>
       </div>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-satellite-dish text-cyan-400 mr-2"></i>Partie 1 — Capture et analyse basique du handshake</span></summary>
         <div class="acc-body space-y-4">
           <div class="code-block"><span class="cmt"># Filtre de capture (avant capture)</span>
@@ -2684,7 +2688,7 @@ $ mitmproxy -p 8080</div>
       <h3 class="font-display text-2xl md:text-3xl font-bold mb-2">Hachage en ligne <span class="text-cyan-400">et attaques sur mots de passe</span></h3>
       <p class="text-gray-400 mb-6">But : comprendre l'attaque par dictionnaire et l'attaque par force brute sur des mots de passe hachés.</p>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-database text-cyan-400 mr-2"></i>Contexte — mots de passe hachés</span></summary>
         <div class="acc-body space-y-3">
           <p class="text-sm text-gray-400">De nombreux sites (Google, Amazon, Jumia…) stockent les mots de passe sous forme d'empreintes (hash), jamais en clair.</p>
@@ -2769,7 +2773,7 @@ e67279c2218e2ed5851e6cfc85308537</div>
         <p class="text-sm text-gray-400">VM Linux (Debian/Ubuntu recommandé) · accès root/sudo · administration Linux · notions TCP/IP</p>
       </div>
 
-      <details class="acc" open>
+      <details class="acc">
         <summary><span><i class="fa-solid fa-server text-cyan-400 mr-2"></i>Introduction — Proxy, Squid, SquidGuard</span></summary>
         <div class="acc-body space-y-3">
           <p class="text-sm">Un <span class="text-white">serveur proxy</span> est un intermédiaire entre les clients d'un réseau local et Internet : filtrage du contenu, mise en cache, contrôle/audit des accès, sécurité renforcée, économie de bande passante.</p>
@@ -3115,6 +3119,16 @@ squid -N -d1                    <span class="cmt"># debug</span></div>
     icon.classList.add('fa-bars');
     document.body.style.overflow = '';
   }
+
+  // Fermer le menu en cliquant en dehors des liens (sur le fond sombre)
+  document.getElementById('mobileMenu').addEventListener('click', (e) => {
+    if(e.target.id === 'mobileMenu') closeMobileMenu();
+  });
+
+  // Fermer avec la touche Échap
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeMobileMenu();
+  });
 
   function showToast(msg){
     const t = document.getElementById('toast');
@@ -3551,6 +3565,14 @@ squid -N -d1                    <span class="cmt"># debug</span></div>
     document.getElementById('quizResult').classList.add('hidden');
     loadQuestion();
   }
+
+  if(location.hash){
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  closeMobileMenu();
+  window.scrollTo(0, 0);
+  window.addEventListener('load', () => { closeMobileMenu(); window.scrollTo(0, 0); });
+  window.addEventListener('pageshow', () => { closeMobileMenu(); window.scrollTo(0, 0); });
 
   loadQuestion();
 </script>
